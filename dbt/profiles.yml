@@ -1,0 +1,15 @@
+config:
+  send_anonymous_usage_stats: False
+
+my_finances:
+  target: docker
+  outputs:
+    docker:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST') }}"
+      port: 5432
+      user: "{{ env_var('POSTGRES_USER') }}"
+      pass: "{{ env_var('POSTGRES_PASSWORD') }}"
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: 'dbt'
+      threads: 1

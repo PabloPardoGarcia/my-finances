@@ -1,0 +1,7 @@
+.idea
+**/.terraform*
+**/*.tfstate*
+**/*.log
+*.csv
+.git-crypt
+.DS_Store

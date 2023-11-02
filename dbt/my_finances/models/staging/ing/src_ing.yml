@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: ing
+    description: ING Data sources
+    schema: raw_ing
+    config:
+      enabled: true
+    tables:
+      - name: transactions
