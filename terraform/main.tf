@@ -14,7 +14,7 @@ module "my-finances-postgres-volume" {
   namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name
   pvc_name = "my-finances-postgres-pvc"
   pv_name = "my-finances-postgres-pv"
-  pv_path = "/Users/pablo/Documents/projects/my_finances/db"
+  pv_path = abspath("../db")
   pv_capacity = "500Mi"
   pv_node_names = ["docker-desktop"]
   storage_class_name = module.local-storage-class.storage-class-name
@@ -34,7 +34,7 @@ module "my-finances-dbt-volume" {
   namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name
   pvc_name = "my-finances-dbt-pvc"
   pv_name = "my-finances-dbt-pv"
-  pv_path = "/Users/pablo/Documents/projects/my_finances/dbt"
+  pv_path = abspath("../dbt")
   pv_capacity = "200Mi"
   pv_node_names = ["docker-desktop"]
   storage_class_name = module.local-storage-class.storage-class-name
