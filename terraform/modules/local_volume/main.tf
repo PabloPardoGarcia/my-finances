@@ -1,15 +1,15 @@
 resource "kubernetes_persistent_volume_v1" "local-volume" {
   metadata {
-    name = var.local_volume_name
+    name = var.pv_name
   }
   spec {
-    access_modes = var.local_volume_access_modes
+    access_modes = var.pv_access_modes
     capacity     = {
-      storage = var.local_volume_capacity
+      storage = var.pv_capacity
     }
     persistent_volume_source {
       local {
-        path = var.local_volume_path
+        path = var.pv_path
       }
     }
     persistent_volume_reclaim_policy = "Retain"
@@ -19,7 +19,7 @@ resource "kubernetes_persistent_volume_v1" "local-volume" {
           match_expressions {
             key      = "kubernetes.io/hostname"
             operator = "In"
-            values = var.local_volume_node_names
+            values = var.pv_node_names
           }
         }
       }
@@ -31,15 +31,16 @@ resource "kubernetes_persistent_volume_v1" "local-volume" {
 resource "kubernetes_persistent_volume_claim_v1" "local-pvc" {
   metadata {
     name = var.pvc_name
-    namespace = var.pvc_namespace
+    namespace = var.namespace
   }
   spec {
     access_modes = var.pvc_access_modes
     storage_class_name = var.storage_class_name
     resources {
       requests = {
-        storage = var.local_volume_capacity
+        storage = var.pv_capacity
       }
     }
   }
+  wait_until_bound = false
 }

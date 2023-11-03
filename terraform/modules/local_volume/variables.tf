@@ -3,28 +3,28 @@ variable "storage_class_name" {
   description = "Storage Class Name"
 }
 
-variable "local_volume_name" {
+variable "pv_name" {
   type = string
   description = "Local Volume Name"
 }
 
-variable "local_volume_capacity" {
+variable "pv_capacity" {
   type = string
   description = "Local Volume Capacity"
 }
 
-variable "local_volume_path" {
+variable "pv_path" {
   type = string
   description = "Local Volume Path"
 }
 
-variable "local_volume_access_modes" {
+variable "pv_access_modes" {
   type = list(string)
   description = "Local Volume access modes"
   default = ["ReadWriteOnce"]
 }
 
-variable "local_volume_node_names" {
+variable "pv_node_names" {
   type = list(string)
   description = "List of node names on which to make the local volume available"
 }
@@ -40,7 +40,7 @@ variable "pvc_name" {
   description = "PVC Name"
 }
 
-variable "pvc_namespace" {
+variable "namespace" {
   type = string
   description = "PVC Namespace"
 }
