@@ -1,10 +1,29 @@
 version: 2
 
 sources:
-  - name: ing
+  - name: raw_ing
     description: ING Data sources
     schema: raw_ing
     config:
       enabled: true
     tables:
       - name: transactions
+        columns:
+          - name: booking
+            description: Date when the transaction was booked
+          - name: value_date
+            description: Date when the transaction was executed
+          - name: client_recipient
+            description: Client / Recipient
+          - name: booking_text
+            description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+          - name: purpose
+            description: Transaction description
+          - name: balance
+            description: Account balance at the time of the booking
+          - name: balance_currency
+            description: Currency unit for the balance column
+          - name: amount
+            description: Amount of the booking
+          - name: amount_currency
+            description: Currency unit for the amount column
