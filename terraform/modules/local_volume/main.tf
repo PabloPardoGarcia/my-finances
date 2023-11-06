@@ -1,6 +1,7 @@
 resource "kubernetes_persistent_volume_v1" "local-volume" {
   metadata {
     name = var.pv_name
+    labels = var.labels
   }
   spec {
     access_modes = var.pv_access_modes
@@ -32,6 +33,7 @@ resource "kubernetes_persistent_volume_claim_v1" "local-pvc" {
   metadata {
     name = var.pvc_name
     namespace = var.namespace
+    labels = var.labels
   }
   spec {
     access_modes = var.pvc_access_modes

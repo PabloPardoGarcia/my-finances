@@ -7,6 +7,10 @@ module "my-finances-postgres-volume" {
   pv_capacity = "500Mi"
   pv_node_names = ["docker-desktop"]
   storage_class_name = var.storage_class_name
+  labels = {
+    "app.kubernetes.io/name": var.namespace,
+    "app.kubernetes.io/component": "postgres-volume"
+  }
 }
 
 module "postgres" {
@@ -15,7 +19,10 @@ module "postgres" {
   postgres_pvc_name = module.my-finances-postgres-volume.pvc-name
   postgres_pv_name = module.my-finances-postgres-volume.pv-name
   postgres_name = "${var.namespace}-postgres"
-  postgres_labels = var.labels
+  postgres_labels = {
+    "app.kubernetes.io/name": var.namespace,
+    "app.kubernetes.io/component": "postgres"
+  }
 
   postgres_user = data.sops_file.db-secret.data["user"]
   postgres_password = data.sops_file.db-secret.data["password"]
@@ -28,24 +35,35 @@ module "my-finances-dbt-volume" {
   pvc_name = "${var.namespace}-dbt-pvc"
   pv_name = "${var.namespace}-dbt-pv"
   pv_path = abspath("../dbt")
-  pv_capacity = "200Mi"
+  pv_capacity = "300Mi"
   pv_node_names = ["docker-desktop"]
   storage_class_name = var.storage_class_name
+  labels = {
+    "app.kubernetes.io/name": var.namespace,
+    "app.kubernetes.io/component": "dbt-volume"
+  }
 }
 
 resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
   metadata {
     name = "${var.namespace}-dbt"
     namespace = var.namespace
+    labels = {
+      "app.kubernetes.io/name": var.namespace,
+      "app.kubernetes.io/component": "dbt"
+    }
   }
   spec {
     replicas = "1"
     selector {
-      match_labels = var.labels
+      match_labels = {"app.kubernetes.io/name": var.namespace}
     }
     template {
       metadata {
-        labels = var.labels
+        labels = {
+          "app.kubernetes.io/name": var.namespace,
+          "app.kubernetes.io/component": "dbt"
+        }
       }
       spec {
         volume {
@@ -102,7 +120,10 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
   metadata {
     name = "${var.namespace}-dbt"
     namespace = var.namespace
-    labels = var.labels
+    labels = {
+      "app.kubernetes.io/name": var.namespace,
+      "app.kubernetes.io/component": "dbt"
+    }
   }
   spec {
     type = "NodePort"
@@ -111,6 +132,8 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
       port = 80
       target_port = "docs-port"
     }
-    selector = var.labels
+    selector = {
+      "app.kubernetes.io/name": var.namespace
+    }
   }
 }

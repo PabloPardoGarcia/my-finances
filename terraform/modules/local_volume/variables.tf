@@ -44,3 +44,9 @@ variable "namespace" {
   type = string
   description = "PVC Namespace"
 }
+
+variable "labels" {
+  type = map(string)
+  description = "Labels for the PV and PVC"
+  default = {}
+}
