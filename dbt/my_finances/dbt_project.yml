@@ -35,3 +35,11 @@ models:
     # Config indicated by + and applies to all files under models/example/
     staging:
       +materialized: view
+      ing:
+        +schema: stg_ing
+
+    marts:
+      +materialized: table
+      finances:
+        +schema: finances
+

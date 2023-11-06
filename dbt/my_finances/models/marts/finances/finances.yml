@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: earnings
+    description: Transactions reflecting earnings
+    columns:
+      - name: transaction_id
+        description: Transaction ID
+        tests:
+          - not_null
+          - unique
+      - name: booking_date
+        description: Date when the transaction was booked
+      - name: value_date
+        description: Date when the transaction was executed
+      - name: client_recipient
+        description: Client / Recipient
+      - name: booking_text
+        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+      - name: purpose
+        description: Transaction description
+      - name: amount
+        description: Amount of the booking
+      - name: amount_currency
+        description: Currency unit for the amount column
+
+  - name: expenses
+    description: Transactions reflecting expenses
+    columns:
+      - name: transaction_id
+        description: Transaction ID
+        tests:
+          - not_null
+          - unique
+      - name: booking_date
+        description: Date when the transaction was booked
+      - name: value_date
+        description: Date when the transaction was executed
+      - name: client_recipient
+        description: Client / Recipient
+      - name: booking_text
+        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+      - name: purpose
+        description: Transaction description
+      - name: amount
+        description: Amount of the booking
+      - name: amount_currency
+        description: Currency unit for the amount column
