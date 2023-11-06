@@ -1,5 +1,18 @@
 version: 2
 
+metrics:
+  - name: total_earnings
+    label: Total earnings
+    model: earnings
+    sql: amount
+    type: sum
+
+  - name: total_expenses
+    label: Total expenses
+    model: expenses
+    sql: amount
+    type: sum
+
 models:
   - name: earnings
     description: Transactions reflecting earnings
