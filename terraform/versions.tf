@@ -9,5 +9,9 @@ terraform {
       source = "hashicorp/helm"
       version = "2.11.0"
     }
+    sops = {
+      source = "carlpett/sops"
+      version = "~> 0.5"
+    }
   }
 }

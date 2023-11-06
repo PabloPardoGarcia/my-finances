@@ -26,18 +26,18 @@ resource "kubernetes_deployment_v1" "postgres-deployment" {
           port {
             container_port = 5432
           }
-          # TODO: Move env values to secrets
+
           env {
             name = "POSTGRES_PASSWORD"
-            value = "example"
+            value = var.postgres_password
           }
           env {
             name = "POSTGRES_USER"
-            value = "example"
+            value = var.postgres_user
           }
           env {
             name = "POSTGRES_DB"
-            value = "myfinances"
+            value = var.postgres_db_name
           }
 
           # TODO: Mount postgres data to local data

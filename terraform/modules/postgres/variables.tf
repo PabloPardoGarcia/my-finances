@@ -24,3 +24,21 @@ variable "postgres_labels" {
   description = "Labels to attach to the postgres components"
   default = {"app": "postgres"}
 }
+
+variable "postgres_user" {
+  type = string
+  description = "Postgres DB User"
+  sensitive = true
+}
+
+variable "postgres_password" {
+  type = string
+  description = "Postgres DB Password"
+  sensitive = true
+}
+
+variable "postgres_db_name" {
+  type = string
+  description = "Postgres DB Name"
+  sensitive = true
+}

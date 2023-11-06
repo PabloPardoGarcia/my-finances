@@ -29,3 +29,21 @@ variable "storage_class_name" {
   description = "Storage Class Name"
   default = "local-storage-class"
 }
+
+#variable "postgres_user" {
+#  type = string
+#  description = "Postgres DB User"
+#  sensitive = true
+#}
+#
+#variable "postgres_password" {
+#  type = string
+#  description = "Postgres DB Password"
+#  sensitive = true
+#}
+#
+#variable "postgres_db_name" {
+#  type = string
+#  description = "Postgres DB Name"
+#  sensitive = true
+#}

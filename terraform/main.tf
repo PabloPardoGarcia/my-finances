@@ -6,7 +6,6 @@ resource "kubernetes_namespace" "my-finances-namespace" {
 
 module "local-storage-class" {
   source = "./modules/storage"
-  local_storage_class_name = "local-storage-class"
 }
 
 module "my_finances" {

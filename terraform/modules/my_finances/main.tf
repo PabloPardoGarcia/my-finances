@@ -14,15 +14,19 @@ module "postgres" {
   postgres_namespace = var.namespace
   postgres_pvc_name = module.my-finances-postgres-volume.pvc-name
   postgres_pv_name = module.my-finances-postgres-volume.pv-name
-  postgres_name = "my-finances-postgres"
+  postgres_name = "${var.namespace}-postgres"
   postgres_labels = var.labels
+
+  postgres_user = data.sops_file.db-secret.data["user"]
+  postgres_password = data.sops_file.db-secret.data["password"]
+  postgres_db_name = data.sops_file.db-secret.data["db"]
 }
 
 module "my-finances-dbt-volume" {
   source = "../local_volume"
   namespace = var.namespace
-  pvc_name = "my-finances-dbt-pvc"
-  pv_name = "my-finances-dbt-pv"
+  pvc_name = "${var.namespace}-dbt-pvc"
+  pv_name = "${var.namespace}-dbt-pv"
   pv_path = abspath("../dbt")
   pv_capacity = "200Mi"
   pv_node_names = ["docker-desktop"]
@@ -31,7 +35,7 @@ module "my-finances-dbt-volume" {
 
 resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
   metadata {
-    name = "my-finances-dbt"
+    name = "${var.namespace}-dbt"
     namespace = var.namespace
   }
   spec {
@@ -61,19 +65,19 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
 
           env {
             name = "POSTGRES_PASSWORD"
-            value = "example"
+            value = data.sops_file.db-secret.data["password"]
           }
           env {
             name = "POSTGRES_USER"
-            value = "example"
+            value = data.sops_file.db-secret.data["user"]
           }
           env {
             name = "POSTGRES_DB"
-            value = "myfinances"
+            value = data.sops_file.db-secret.data["db"]
           }
           env {
             name = "POSTGRES_HOST"
-            value = "my-finances-postgres"
+            value = module.postgres.service-name
           }
 
           volume_mount {
@@ -96,7 +100,7 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
 
 resource "kubernetes_service_v1" "my-finances-dbt-service" {
   metadata {
-    name = "my-finances-dbt"
+    name = "${var.namespace}-dbt"
     namespace = var.namespace
     labels = var.labels
   }
