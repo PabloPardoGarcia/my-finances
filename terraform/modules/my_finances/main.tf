@@ -29,23 +29,18 @@ module "postgres" {
   postgres_db_name = data.sops_file.db-secret.data["db"]
 }
 
-module "my-finances-dbt-volume" {
-  source = "../local_volume"
-  namespace = var.namespace
-  pv_name = "${var.namespace}-dbt-pv"
-  pv_path = abspath("../dbt")
-  pv_capacity = "300Mi"
-  pv_node_names = ["docker-desktop"]
-  pv_access_modes = ["ReadWriteOnce"]
-  storage_class_name = var.storage_class_name
-  labels = {
-    "app.kubernetes.io/name": var.namespace,
-    "app.kubernetes.io/component": "dbt-volume"
+resource "kubernetes_secret_v1" "git-credentials" {
+  metadata {
+    name = "git-credentials"
+    namespace = var.namespace
   }
-  create_pvc = false
+  data = {
+    "ssh": base64encode(jsonencode(data.sops_file.git-sync-secret.data["ssh-key-file"]))
+    "known_hosts": base64encode(jsonencode(data.sops_file.git-sync-secret.data["known-hosts"]))
+  }
 }
 
-resource "kubernetes_stateful_set_v1" "my-finances-dbt-stateful-set" {
+resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
   metadata {
     name = "${var.namespace}-dbt"
     namespace = var.namespace
@@ -55,11 +50,10 @@ resource "kubernetes_stateful_set_v1" "my-finances-dbt-stateful-set" {
     }
   }
   spec {
-    service_name = "${var.namespace}-dbt"
+    replicas = "1"
     selector {
       match_labels = {"app.kubernetes.io/name": var.namespace}
     }
-    replicas = "1"
     template {
       metadata {
         labels = {
@@ -68,10 +62,19 @@ resource "kubernetes_stateful_set_v1" "my-finances-dbt-stateful-set" {
         }
       }
       spec {
-        termination_grace_period_seconds = 10
+        volume {
+          name = "git-sync-content"
+        }
+        volume {
+          name = "git-sync-secret"
+          secret {
+            secret_name = kubernetes_secret_v1.git-credentials.metadata.0.name
+            default_mode = "0400"
+          }
+        }
         container {
           name  = "dbt"
-          image = "custom-dbt-postgres-1.6.6"
+          image = var.dbt_image
           image_pull_policy = "IfNotPresent"
           port {
             container_port = 8080
@@ -97,34 +100,41 @@ resource "kubernetes_stateful_set_v1" "my-finances-dbt-stateful-set" {
 
           volume_mount {
             mount_path = "/usr/app"
-            name       = "${var.namespace}-dbt-pvc"
-            sub_path   = var.dbt_pv_path_to_app
+            name       = "git-sync-content"
+            sub_path   = var.git_sync_path_to_dbt
           }
-
           volume_mount {
             mount_path = "/root/.dbt/profiles.yml"
-            name       = "${var.namespace}-dbt-pvc"
-            sub_path   = var.dbt_pv_path_to_profiles
+            name       = "git-sync-content"
+            sub_path   = var.git_sync_path_to_dbt_profiles
+            read_only = true
           }
         }
-      }
-    }
-    volume_claim_template {
-      metadata {
-        name = "${var.namespace}-dbt-pvc"
-        namespace = var.namespace
-        labels = {
-          "app.kubernetes.io/name": var.namespace,
-          "app.kubernetes.io/component": "dbt-volume"
-        }
-      }
-      spec {
-        access_modes = ["ReadWriteOnce"]
-        storage_class_name = var.storage_class_name
-        resources {
-          requests = {
-            storage = module.my-finances-dbt-volume.pv-volume-capacity
+
+        container {
+          name = "git-sync"
+          image = var.git_sync_image
+          args = [
+            "--repo=${var.git_sync_git_repo}",
+            "--period=60s",
+            "--root=/git",
+            "--ssh",
+            "--ssh-known-hosts"
+          ]
+          security_context {
+            run_as_user = 65533
           }
+          volume_mount {
+            mount_path = "/git"
+            name       = "git-sync-content"
+          }
+          volume_mount {
+            mount_path = "/etc/git-secret"
+            name       = "git-sync-secret"
+          }
+        }
+        security_context {
+          fs_group = 65533
         }
       }
     }
