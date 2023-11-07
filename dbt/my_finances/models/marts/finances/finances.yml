@@ -1,18 +1,5 @@
 version: 2
 
-metrics:
-  - name: total_earnings
-    label: Total earnings
-    model: earnings
-    sql: amount
-    type: sum
-
-  - name: total_expenses
-    label: Total expenses
-    model: expenses
-    sql: amount
-    type: sum
-
 models:
   - name: earnings
     description: Transactions reflecting earnings
@@ -34,6 +21,10 @@ models:
         description: Transaction description
       - name: amount
         description: Amount of the booking
+        meta:
+          metrics:
+            total_earnings:
+              type: sum
       - name: amount_currency
         description: Currency unit for the amount column
 
@@ -57,5 +48,9 @@ models:
         description: Transaction description
       - name: amount
         description: Amount of the booking
+        meta:
+          metrics:
+            total_expenses:
+              type: sum
       - name: amount_currency
         description: Currency unit for the amount column
