@@ -3,6 +3,12 @@ variable "storage_class_name" {
   description = "Storage Class Name"
 }
 
+variable "create_pvc" {
+  type = bool
+  description = "When true (default), it creates a pvc"
+  default = true
+}
+
 variable "pv_name" {
   type = string
   description = "Local Volume Name"
@@ -38,6 +44,8 @@ variable "pvc_access_modes" {
 variable "pvc_name" {
   type = string
   description = "PVC Name"
+  default = ""
+  nullable = false
 }
 
 variable "namespace" {

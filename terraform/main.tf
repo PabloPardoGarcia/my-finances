@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "my-finances-namespace" {
 module "local-storage-class" {
   source = "./modules/storage"
 }
-
+#
 module "my_finances" {
   source = "./modules/my_finances"
   namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name

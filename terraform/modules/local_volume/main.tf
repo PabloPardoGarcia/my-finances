@@ -30,6 +30,7 @@ resource "kubernetes_persistent_volume_v1" "local-volume" {
 }
 
 resource "kubernetes_persistent_volume_claim_v1" "local-pvc" {
+  count = var.create_pvc == true ? 1 : 0
   metadata {
     name = var.pvc_name
     namespace = var.namespace
