@@ -106,11 +106,3 @@ terraform apply
 ```
 
 ## Usage
-
-## License
-
-
-
-
-
-
