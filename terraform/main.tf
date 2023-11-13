@@ -1,3 +1,7 @@
+module "ingress-controller" {
+  source = "./modules/ingress-nginx"
+}
+
 resource "kubernetes_namespace" "my-finances-namespace" {
   metadata {
     name = "my-finances"
@@ -17,9 +21,11 @@ module "my_finances" {
   git_sync_git_repo = "https://github.com/PabloPardoGarcia/my-finances"
   git_sync_image = "registry.k8s.io/git-sync/git-sync:v4.0.0"
   dbt_image = "custom-dbt-postgres-1.6.6"
+  site_url = "mysites.internal"
 }
 
 module "lightdash" {
   source = "./modules/lightdash"
   namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name
+  site_url = "mysites.internal"
 }

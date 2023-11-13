@@ -33,3 +33,8 @@ variable "storage_class_name" {
   description = "Storage Class Name"
   default = "local-storage-class"
 }
+
+variable "site_url" {
+  type = string
+  description = "Site URL"
+}

@@ -9,3 +9,8 @@ variable "helm_version" {
   description = "Lightdash helm version"
   default = "0.8.9"
 }
+
+variable "site_url" {
+  type = string
+  description = "Site URL"
+}

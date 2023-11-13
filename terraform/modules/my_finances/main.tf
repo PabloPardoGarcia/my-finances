@@ -4,7 +4,7 @@ module "my-finances-postgres-volume" {
   pvc_name = "my-finances-postgres-pvc"
   pv_name = "my-finances-postgres-pv"
   pv_path = abspath("../db")
-  pv_capacity = "500Mi"
+  pv_capacity = "250Mi"
   pv_node_names = ["docker-desktop"]
   storage_class_name = var.storage_class_name
   labels = {
@@ -72,6 +72,35 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
             default_mode = "0400"
           }
         }
+
+        init_container {
+          name = "dbt-repo-setup"
+          image = var.git_sync_image
+          args = [
+            "--repo=${var.git_sync_git_repo}",
+            "--branch=master",
+            "--depth=1",
+            "--max-failures=6",
+            "--one-time=true",  # exit after the first sync (we just want to initialize the file system)
+            "--period=10s",
+            "--root=/git",
+            "--ssh=true",
+            "--ssh-known-hosts=true"
+          ]
+          security_context {
+            run_as_user = "65533" # git-sync-user
+          }
+          volume_mount {
+            mount_path = "/git"
+            name       = "git-sync-content"
+          }
+          volume_mount {
+            mount_path = "/etc/git-secret"
+            name       = "git-sync-secret"
+            read_only = true
+          }
+        }
+
         container {
           name  = "dbt"
           image = var.dbt_image
@@ -116,13 +145,17 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
           image = var.git_sync_image
           args = [
             "--repo=${var.git_sync_git_repo}",
+            "--branch=master",
+            "--depth=1",
+            "--max-failures=-1",
             "--period=60s",
             "--root=/git",
+            "--add-user",
             "--ssh",
             "--ssh-known-hosts"
           ]
           security_context {
-            run_as_user = 65533
+            run_as_user = "65533" # git-sync-user
           }
           volume_mount {
             mount_path = "/git"
@@ -131,10 +164,12 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
           volume_mount {
             mount_path = "/etc/git-secret"
             name       = "git-sync-secret"
+            read_only = true
           }
         }
+
         security_context {
-          fs_group = 65533
+          fs_group = "65533" # git-sync-user
         }
       }
     }
@@ -153,7 +188,7 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
   spec {
     type = "NodePort"
     port {
-      name = "dbt-docs-port"
+      name = "http"
       port = 80
       target_port = "docs-port"
     }
@@ -162,3 +197,38 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
     }
   }
 }
+
+resource "kubernetes_ingress_v1" "my-finances-ingress" {
+  metadata {
+    namespace = var.namespace
+    name = "my-finances-ingress"
+    annotations = {
+      "kubernetes.io/ingress.class" = "nginx"
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
+      "nginx.ingress.kubernetes.io/use-regex" = "true"
+      "nginx.ingress.kubernetes.io/enable-cors" = "true"
+      "nginx.ingress.kubernetes.io/cors-allow-methods" = "GET, OPTIONS, HEAD"
+
+    }
+  }
+  spec {
+    rule {
+      host = var.site_url
+      http {
+        path {
+          path = "/dbt(/|$)(.*)"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = kubernetes_service_v1.my-finances-dbt-service.metadata.0.name
+              port {
+                name = "http"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
