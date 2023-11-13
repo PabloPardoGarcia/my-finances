@@ -6,8 +6,6 @@
   - [Prerequisites](#prerequisites)
   - [Configuration](#configuration)
   - [Deployment](#deployment)
-- [Usage](#usage)
-- [License](#license)
 
 ## Introduction
 
