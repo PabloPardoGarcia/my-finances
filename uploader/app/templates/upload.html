@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}My Finances - Uploader App{% endblock %}
+{#{% block head %}#}
+{#{{ super() }}#}
+{##}
+{#{% endblock %}#}
+
+{% block page_content %}
+<main role="main" class="container">
+    <form method="POST">
+        <div class="mb-3">
+            <label for="uploadFile" class="form-label">Upload CSV</label>
+            <input class="form-control" type="file" id="file">
+        </div>
+        <div class="mb-3">
+            <input type="text" required placeholder="Table Name" name="Table Name" class="form-control" id="table_name">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</main><!-- /.container -->
+{% endblock %}
+
+{#{% block scripts %}#}
+{#{{ super() }}#}
+{##}
+{#{% endblock %}#}
