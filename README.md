@@ -26,8 +26,8 @@ flowchart TB
             s2 <--> s1
         end
         subgraph uploader
-            s3[["uploader service"]]:::todoclass;
-            web3(["uploader UI"]):::todoclass;
+            s3[["uploader service"]]
+            web3(["uploader UI"]);
             s3 --> s1
             web3 <--> s3
         end
