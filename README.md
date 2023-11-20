@@ -77,14 +77,20 @@ Before you can deploy this project, you'll need the following:
    - Modify [dbt source model](dbt/my_finances/models/staging/ing/src_ing.yml) accordingly
    - Modify downstream dbt models if needed
 
-3. Build dbt docker image with modified entrypoint:
+3. Build dbt and uploader docker images:
 
    ```shell
-   docker build -f Dockerfile -t custom-dbt-postgres-1.6.6 .
+   cd dbt
+   docker build -f Dockerfile -t my-finances-dbt .
+   ```
+   
+    ```shell
+   cd uploader
+   docker build -f Dockerfile -t my-finances-uploader .
    ```
 
 4. Configure [sops with age](https://github.com/getsops/sops#encrypting-using-age). 
-   Update [`.sops.yaml`](terraform/.sops.yaml) with your own age recpient
+   Update [`.sops.yaml`](terraform/.sops.yaml) with your own age recipient
     
 5. Configure terraform
    1. Update kubernetes provider to match your own cluster configuration
