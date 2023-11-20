@@ -18,23 +18,26 @@ database = Database(
     password=os.getenv("POSTGRES_PASSWORD"),
     dbname=os.getenv("POSTGRES_DB")
 )
-templates = Jinja2Templates(directory=str(Path(BASE_DIR, 'templates')))
+templates = Jinja2Templates(directory=str(Path(BASE_DIR, "templates")))
 app = FastAPI(
     title="My Finances Uploader App",
     version="0.0.0"
 )
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse(
+        name="index.html",
+        context={"request": request}
+    )
 
 
 @app.get("/upload", response_class=HTMLResponse)
 def upload(request: Request):
     return templates.TemplateResponse(
-        name='upload.html',
-        context={'request': request}
+        name="upload.html",
+        context={"request": request}
     )
 
 

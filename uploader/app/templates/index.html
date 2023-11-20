@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block page_content %}
+<main role="main" class="container">
+    <div class="mb-3 row">
+        <div class="col">
+            <h1>My Finances</h1>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col">
+            <p>Upload bank statements in CSV form to update My Finances database.</p>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col">
+            <a class="btn btn-primary" role="button" href="/upload">Upload</a>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col">
+            <a class="btn btn-primary" role="button" href="/dbt/">dbt docs</a>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <div class="col">
+            <a class="btn btn-primary" role="button" href="/lightdash/">Lightdash</a>
+        </div>
+    </div>
+</main><!-- /.container -->
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
