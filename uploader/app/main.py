@@ -1,4 +1,4 @@
-from .db import copy_file
+from .db import copy_file, get_table_size
 from .models import Database
 
 import os
@@ -50,15 +50,19 @@ def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotat
         )
 
     try:
+        table_count_before = get_table_size(table_name=table_name, database=database)
         copy_file(
             file=file.file,
             database=database,
             table_name=table_name,
-            options=["HEADER", "CSV"]
+            options=["HEADER", "CSV", "DELIMITER ';'"]
         )
+        table_count_after = get_table_size(table_name=table_name, database=database)
     except Exception as e:
         return {"message": f"There was an error uploading the file. {e}"}
     finally:
         file.file.close()
 
-    return {"message": f"Successfully uploaded {file.filename}"}
+    return {"message": f"Successfully uploaded {file.filename}. "
+                       f"Table count before was {table_count_before} and "
+                       f"after the upload is {table_count_after}"}
