@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: raw_ing
-    description: ING Data sources
-    schema: raw_ing
+  - name: sources
+    description: Data sources
+    schema: sources
     config:
       enabled: true
     tables:

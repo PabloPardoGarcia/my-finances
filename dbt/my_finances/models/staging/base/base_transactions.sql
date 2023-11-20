@@ -1,6 +1,6 @@
 WITH source AS (
 
-    SELECT * FROM {{ source('raw_ing', 'transactions') }}
+    SELECT * FROM {{ source('sources', 'transactions') }}
 
 )
 

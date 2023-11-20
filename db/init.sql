@@ -1,5 +1,5 @@
-CREATE SCHEMA raw_ing;
-CREATE TABLE raw_ing.transactions (
+CREATE SCHEMA sources;
+CREATE TABLE sources.transactions(
     booking TEXT,
     value_date TEXT,
     client_recipient TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE raw_ing.transactions (
     amount_currency TEXT
 );
 
-COPY raw_ing.transactions
+COPY sources.transactions
 FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/dataset.csv'
 DELIMITER ';'
 CSV;
