@@ -198,6 +198,84 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
   }
 }
 
+resource "kubernetes_deployment_v1" "my-finances-uploader-deployment" {
+  metadata {
+    name = "${var.namespace}-uploader"
+    namespace = var.namespace
+    labels = {
+      "app.kubernetes.io/name": var.namespace,
+      "app.kubernetes.io/component": "uploader"
+    }
+  }
+  spec {
+    replicas = "1"
+    selector {
+      match_labels = {
+        "app.kubernetes.io/name": var.namespace
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          "app.kubernetes.io/name": var.namespace,
+          "app.kubernetes.io/component": "uploader"
+        }
+      }
+      spec {
+        container {
+          name = "uploader"
+          image = var.uploader_image
+          image_pull_policy = "IfNotPresent"
+
+          port {
+            container_port = 80
+            name = "api"
+          }
+
+          env {
+            name = "POSTGRES_PASSWORD"
+            value = data.sops_file.db-secret.data["password"]
+          }
+          env {
+            name = "POSTGRES_USER"
+            value = data.sops_file.db-secret.data["user"]
+          }
+          env {
+            name = "POSTGRES_DB"
+            value = data.sops_file.db-secret.data["db"]
+          }
+          env {
+            name = "POSTGRES_HOST"
+            value = module.postgres.service-name
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service_v1" "my-finances-uploader-service" {
+  metadata {
+    name = "${var.namespace}-uploader"
+    namespace = var.namespace
+    labels = {
+      "app.kubernetes.io/name": var.namespace,
+      "app.kubernetes.io/component": "uploader"
+    }
+  }
+  spec {
+    type = "NodePort"
+    port {
+      name = "http"
+      port = 80
+      target_port = "api"
+    }
+    selector = {
+      "app.kubernetes.io/component": "uploader"
+    }
+  }
+}
+
 resource "kubernetes_ingress_v1" "my-finances-ingress" {
   metadata {
     namespace = var.namespace
@@ -207,7 +285,7 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
       "nginx.ingress.kubernetes.io/use-regex" = "true"
       "nginx.ingress.kubernetes.io/enable-cors" = "true"
-      "nginx.ingress.kubernetes.io/cors-allow-methods" = "GET, OPTIONS, HEAD"
+      "nginx.ingress.kubernetes.io/cors-allow-methods" = "POST, PUT, PATCH, GET, OPTIONS, HEAD"
 
     }
   }
@@ -221,6 +299,24 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
           backend {
             service {
               name = kubernetes_service_v1.my-finances-dbt-service.metadata.0.name
+              port {
+                name = "http"
+              }
+            }
+          }
+        }
+      }
+    }
+
+    rule {
+      host = var.site_url
+      http {
+        path {
+          path = "/(/|$)(.*)"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = kubernetes_service_v1.my-finances-uploader-service.metadata.0.name
               port {
                 name = "http"
               }

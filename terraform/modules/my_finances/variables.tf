@@ -28,6 +28,11 @@ variable "dbt_image" {
   description = "dbt image name"
 }
 
+variable "uploader_image" {
+  type = string
+  description = "uploader image name"
+}
+
 variable "storage_class_name" {
   type = string
   description = "Storage Class Name"
