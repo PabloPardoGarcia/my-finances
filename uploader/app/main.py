@@ -1,11 +1,13 @@
-from .models import Database
 from .db import copy_file
+from .models import Database
 
 import os
-from fastapi import FastAPI, UploadFile, HTTPException, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 from pathlib import Path
+from typing import Annotated
+
+from fastapi import FastAPI, UploadFile, HTTPException, Request, Form, File
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -37,7 +39,7 @@ def upload(request: Request):
 
 
 @app.post("/upload")
-def upload_csv_to_table(file: UploadFile, table_name: str):
+def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotated[str, Form()]):
     if file.content_type != "text/csv":
         raise HTTPException(
             status_code=400,
@@ -51,8 +53,8 @@ def upload_csv_to_table(file: UploadFile, table_name: str):
             table_name=table_name,
             options=["HEADER", "CSV"]
         )
-    except Exception:
-        return {"message": "There was an error uploading the file"}
+    except Exception as e:
+        return {"message": f"There was an error uploading the file. {e}"}
     finally:
         file.file.close()
 
