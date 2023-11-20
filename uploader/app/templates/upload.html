@@ -35,6 +35,13 @@
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+    {% if results is not none %}
+    <div class="mb-3 row">
+        <div class="alert alert-success" role="alert">
+            Table count before was {{ results.table_count_before }} and after the upload is {{ results.table_count_after }}
+        </div>
+    </div>
+    {% endif %}
 </main><!-- /.container -->
 {% endblock %}
 

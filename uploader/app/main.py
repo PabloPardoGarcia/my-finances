@@ -37,12 +37,12 @@ async def root(request: Request):
 def upload(request: Request):
     return templates.TemplateResponse(
         name="upload.html",
-        context={"request": request}
+        context={"request": request, "results": None}
     )
 
 
-@app.post("/upload")
-def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotated[str, Form()]):
+@app.post("/upload", response_class=HTMLResponse)
+def upload_csv_to_table(request: Request, file: Annotated[UploadFile, File()], table_name: Annotated[str, Form()]):
     if file.content_type != "text/csv":
         raise HTTPException(
             status_code=400,
@@ -63,6 +63,11 @@ def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotat
     finally:
         file.file.close()
 
-    return {"message": f"Successfully uploaded {file.filename}. "
-                       f"Table count before was {table_count_before} and "
-                       f"after the upload is {table_count_after}"}
+    return templates.TemplateResponse(
+        name="upload.html",
+        context={"request": request, "results": {
+            "filename": file.filename,
+            "table_count_before": table_count_before,
+            "table_count_after": table_count_after
+        }}
+    )
