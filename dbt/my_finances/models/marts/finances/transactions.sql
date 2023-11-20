@@ -1,6 +1,6 @@
 WITH base AS (
 
-    SELECT * FROM {{ ref('transactions') }}
+    SELECT * FROM {{ ref('base_transactions') }}
 
 )
 
@@ -11,7 +11,8 @@ SELECT
     client_recipient,
     booking_text,
     purpose,
+    balance,
+    balance_currency,
     amount,
-    amount_currency
+    amount_currency,
 FROM base
-WHERE amount > 0

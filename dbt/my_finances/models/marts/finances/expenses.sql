@@ -1,6 +1,6 @@
 WITH base AS (
 
-    SELECT * FROM {{ ref('base_transactions') }}
+    SELECT * FROM {{ ref('transactions') }}
 
 )
 
