@@ -290,15 +290,16 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
     }
   }
   spec {
+
     rule {
       host = var.site_url
       http {
         path {
-          path = "/dbt(/|$)(.*)"
+          path = "/()((?:upload)?)"
           path_type = "Prefix"
           backend {
             service {
-              name = kubernetes_service_v1.my-finances-dbt-service.metadata.0.name
+              name = kubernetes_service_v1.my-finances-uploader-service.metadata.0.name
               port {
                 name = "http"
               }
@@ -312,11 +313,11 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
       host = var.site_url
       http {
         path {
-          path = "/(/|$)(.*)"
+          path = "/(dbt[/|$]?)(.*)"
           path_type = "Prefix"
           backend {
             service {
-              name = kubernetes_service_v1.my-finances-uploader-service.metadata.0.name
+              name = kubernetes_service_v1.my-finances-dbt-service.metadata.0.name
               port {
                 name = "http"
               }
@@ -325,6 +326,7 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
         }
       }
     }
+
   }
 }
 
