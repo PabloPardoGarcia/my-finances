@@ -12,7 +12,10 @@ CREATE TABLE sources.transactions(
     amount_currency TEXT
 );
 
-COPY sources.transactions
+COPY sources.transactions (
+        booking, value_date, client_recipient, booking_text, purpose,
+        balance, balance_currency, amount, amount_currency
+    )
 FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/dataset.csv'
 DELIMITER ';'
 CSV;
