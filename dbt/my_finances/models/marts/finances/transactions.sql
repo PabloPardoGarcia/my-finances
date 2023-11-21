@@ -14,5 +14,5 @@ SELECT
     balance,
     balance_currency,
     amount,
-    amount_currency,
+    amount_currency
 FROM base
