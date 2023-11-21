@@ -33,8 +33,8 @@ CREATE TABLE sources.transaction_categories(
     updated_at TIMESTAMP,
     CONSTRAINT fk_transaction
         FOREIGN KEY (transaction_id)
-            REFERENCES transactions(transaction_id),
+            REFERENCES sources.transactions(transaction_id),
     CONSTRAINT fk_category
         FOREIGN KEY (category_id)
-            REFERENCES categories(category_id)
+            REFERENCES sources.categories(category_id)
 );
