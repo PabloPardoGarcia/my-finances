@@ -9,6 +9,11 @@ sources:
     tables:
       - name: transactions
         columns:
+          - name: transaction_id
+            description: Unique transaction ID
+            tests:
+              - unique
+              - not_null
           - name: booking
             description: Date when the transaction was booked
           - name: value_date

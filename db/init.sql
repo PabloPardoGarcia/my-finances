@@ -1,5 +1,6 @@
 CREATE SCHEMA sources;
 CREATE TABLE sources.transactions(
+    transaction_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     booking TEXT,
     value_date TEXT,
     client_recipient TEXT,
@@ -15,3 +16,22 @@ COPY sources.transactions
 FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/dataset.csv'
 DELIMITER ';'
 CSV;
+
+CREATE TABLE sources.categories(
+    category_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+    name TEXT,
+    created_at TIMESTAMP
+);
+
+CREATE TABLE sources.transaction_categories(
+    transaction_id INTEGER,
+    category_id INTEGER,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    CONSTRAINT fk_transaction
+        FOREIGN KEY (transaction_id)
+            REFERENCES transactions(transaction_id),
+    CONSTRAINT fk_category
+        FOREIGN KEY (category_id)
+            REFERENCES categories(category_id)
+);
