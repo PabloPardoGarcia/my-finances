@@ -55,6 +55,11 @@ def upload_csv_to_table(request: Request, file: Annotated[UploadFile, File()], t
             file=file.file,
             database=database,
             table_name=table_name,
+            table_cols=[
+                "booking", "value_date", "client_recipient",
+                "booking_text", "purpose", "balance",
+                "balance_currency", "amount", "amount_currency"
+            ],
             options=["HEADER", "CSV", "DELIMITER ';'"]
         )
         table_count_after = get_table_size(table_name=table_name, database=database)

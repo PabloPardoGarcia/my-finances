@@ -13,14 +13,6 @@ CREATE TABLE sources.transactions(
     inserted_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-COPY sources.transactions (
-        booking, value_date, client_recipient, booking_text, purpose,
-        balance, balance_currency, amount, amount_currency
-    )
-FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/transactions.csv'
-DELIMITER ';'
-CSV;
-
 CREATE TABLE sources.categories(
     category_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     name TEXT,
