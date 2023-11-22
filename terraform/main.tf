@@ -1,20 +1,20 @@
-module "ingress-controller" {
-  source = "./modules/ingress-nginx"
+module "ingress_controller" {
+  source = "./modules/ingress_nginx"
 }
 
-resource "kubernetes_namespace" "my-finances-namespace" {
+resource "kubernetes_namespace" "my_finances_namespace" {
   metadata {
     name = "my-finances"
   }
 }
 
-module "local-storage-class" {
+module "local_storage_class" {
   source = "./modules/storage"
 }
 
 module "my_finances" {
   source = "./modules/my_finances"
-  namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name
+  namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
 
   git_sync_path_to_dbt = "my-finances/dbt/my_finances"
   git_sync_path_to_dbt_profiles = "my-finances/dbt/profiles.yml"
@@ -25,8 +25,8 @@ module "my_finances" {
   site_url = "mysites.internal"
 }
 
-#module "lightdash" {
-#  source = "./modules/lightdash"
-#  namespace = kubernetes_namespace.my-finances-namespace.metadata.0.name
-#  site_url = "mysites.internal"
-#}
+module "lightdash" {
+  source = "./modules/lightdash"
+  namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
+  site_url = "mysites.internal"
+}

@@ -1,4 +1,4 @@
-resource "kubernetes_persistent_volume_v1" "local-volume" {
+resource "kubernetes_persistent_volume_v1" "local_volume" {
   metadata {
     name = var.pv_name
     labels = var.labels
@@ -29,7 +29,7 @@ resource "kubernetes_persistent_volume_v1" "local-volume" {
   }
 }
 
-resource "kubernetes_persistent_volume_claim_v1" "local-pvc" {
+resource "kubernetes_persistent_volume_claim_v1" "local_pvc" {
   count = var.create_pvc == true ? 1 : 0
   metadata {
     name = var.pvc_name

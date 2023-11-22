@@ -12,7 +12,7 @@ resource "helm_release" "lightdash_release" {
   ]
 }
 
-resource "kubernetes_ingress_v1" "lightdash-ingress" {
+resource "kubernetes_ingress_v1" "lightdash_ingress" {
   metadata {
     namespace = var.namespace
     name = "lightdash-ingress"
@@ -29,7 +29,7 @@ resource "kubernetes_ingress_v1" "lightdash-ingress" {
       host = var.site_url
       http {
         path {
-          path = "/lightdash(/|$)(.*)"
+          path = "/(lightdash[/|$]?)(.*)"
           path_type = "Prefix"
           backend {
             service {

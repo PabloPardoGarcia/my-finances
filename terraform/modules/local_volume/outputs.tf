@@ -1,11 +1,11 @@
-output "pv-name" {
-  value = kubernetes_persistent_volume_v1.local-volume.metadata.0.name
+output "pv_name" {
+  value = kubernetes_persistent_volume_v1.local_volume.metadata.0.name
 }
 
-output "pvc-name" {
-  value = one(kubernetes_persistent_volume_claim_v1.local-pvc[*].metadata.0.name)
+output "pvc_name" {
+  value = one(kubernetes_persistent_volume_claim_v1.local_pvc[*].metadata.0.name)
 }
 
-output "pv-volume-capacity" {
-  value = kubernetes_persistent_volume_v1.local-volume.spec.0.capacity.storage
+output "pv_volume_capacity" {
+  value = kubernetes_persistent_volume_v1.local_volume.spec.0.capacity.storage
 }

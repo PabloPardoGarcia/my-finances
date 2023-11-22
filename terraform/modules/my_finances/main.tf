@@ -1,4 +1,4 @@
-module "my-finances-postgres-volume" {
+module "my_finances_postgres_volume" {
   source = "../local_volume"
   namespace = var.namespace
   pvc_name = "my-finances-postgres-pvc"
@@ -16,31 +16,31 @@ module "my-finances-postgres-volume" {
 module "postgres" {
   source = "../postgres"
   postgres_namespace = var.namespace
-  postgres_pvc_name = module.my-finances-postgres-volume.pvc-name
-  postgres_pv_name = module.my-finances-postgres-volume.pv-name
+  postgres_pvc_name = module.my_finances_postgres_volume.pvc_name
+  postgres_pv_name = module.my_finances_postgres_volume.pv_name
   postgres_name = "${var.namespace}-postgres"
   postgres_labels = {
     "app.kubernetes.io/name": var.namespace,
     "app.kubernetes.io/component": "postgres"
   }
 
-  postgres_user = data.sops_file.db-secret.data["user"]
-  postgres_password = data.sops_file.db-secret.data["password"]
-  postgres_db_name = data.sops_file.db-secret.data["db"]
+  postgres_user = data.sops_file.db_secret.data["user"]
+  postgres_password = data.sops_file.db_secret.data["password"]
+  postgres_db_name = data.sops_file.db_secret.data["db"]
 }
 
-resource "kubernetes_secret_v1" "git-credentials" {
+resource "kubernetes_secret_v1" "git_credentials" {
   metadata {
     name = "git-credentials"
     namespace = var.namespace
   }
   data = {
-    "ssh": base64encode(jsonencode(data.sops_file.git-sync-secret.data["ssh-key-file"]))
-    "known_hosts": base64encode(jsonencode(data.sops_file.git-sync-secret.data["known-hosts"]))
+    "ssh": base64encode(jsonencode(data.sops_file.git_sync_secret.data["ssh-key-file"]))
+    "known_hosts": base64encode(jsonencode(data.sops_file.git_sync_secret.data["known-hosts"]))
   }
 }
 
-resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
+resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
   metadata {
     name = "${var.namespace}-dbt"
     namespace = var.namespace
@@ -68,7 +68,7 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
         volume {
           name = "git-sync-secret"
           secret {
-            secret_name = kubernetes_secret_v1.git-credentials.metadata.0.name
+            secret_name = kubernetes_secret_v1.git_credentials.metadata.0.name
             default_mode = "0400"
           }
         }
@@ -112,19 +112,19 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
 
           env {
             name = "POSTGRES_PASSWORD"
-            value = data.sops_file.db-secret.data["password"]
+            value = data.sops_file.db_secret.data["password"]
           }
           env {
             name = "POSTGRES_USER"
-            value = data.sops_file.db-secret.data["user"]
+            value = data.sops_file.db_secret.data["user"]
           }
           env {
             name = "POSTGRES_DB"
-            value = data.sops_file.db-secret.data["db"]
+            value = data.sops_file.db_secret.data["db"]
           }
           env {
             name = "POSTGRES_HOST"
-            value = module.postgres.service-name
+            value = module.postgres.service_name
           }
 
           volume_mount {
@@ -176,7 +176,7 @@ resource "kubernetes_deployment_v1" "my-finances-dbt-deployment" {
   }
 }
 
-resource "kubernetes_service_v1" "my-finances-dbt-service" {
+resource "kubernetes_service_v1" "my_finances_dbt_service" {
   metadata {
     name = "${var.namespace}-dbt"
     namespace = var.namespace
@@ -198,7 +198,7 @@ resource "kubernetes_service_v1" "my-finances-dbt-service" {
   }
 }
 
-resource "kubernetes_deployment_v1" "my-finances-uploader-deployment" {
+resource "kubernetes_deployment_v1" "my_finances_uploader_deployment" {
   metadata {
     name = "${var.namespace}-uploader"
     namespace = var.namespace
@@ -234,19 +234,19 @@ resource "kubernetes_deployment_v1" "my-finances-uploader-deployment" {
 
           env {
             name = "POSTGRES_PASSWORD"
-            value = data.sops_file.db-secret.data["password"]
+            value = data.sops_file.db_secret.data["password"]
           }
           env {
             name = "POSTGRES_USER"
-            value = data.sops_file.db-secret.data["user"]
+            value = data.sops_file.db_secret.data["user"]
           }
           env {
             name = "POSTGRES_DB"
-            value = data.sops_file.db-secret.data["db"]
+            value = data.sops_file.db_secret.data["db"]
           }
           env {
             name = "POSTGRES_HOST"
-            value = module.postgres.service-name
+            value = module.postgres.service_name
           }
         }
       }
@@ -254,7 +254,7 @@ resource "kubernetes_deployment_v1" "my-finances-uploader-deployment" {
   }
 }
 
-resource "kubernetes_service_v1" "my-finances-uploader-service" {
+resource "kubernetes_service_v1" "my_finances_uploader_service" {
   metadata {
     name = "${var.namespace}-uploader"
     namespace = var.namespace
@@ -276,7 +276,7 @@ resource "kubernetes_service_v1" "my-finances-uploader-service" {
   }
 }
 
-resource "kubernetes_ingress_v1" "my-finances-ingress" {
+resource "kubernetes_ingress_v1" "my_finances_ingress" {
   metadata {
     namespace = var.namespace
     name = "my-finances-ingress"
@@ -299,7 +299,7 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
           path_type = "Prefix"
           backend {
             service {
-              name = kubernetes_service_v1.my-finances-uploader-service.metadata.0.name
+              name = kubernetes_service_v1.my_finances_uploader_service.metadata.0.name
               port {
                 name = "http"
               }
@@ -317,7 +317,7 @@ resource "kubernetes_ingress_v1" "my-finances-ingress" {
           path_type = "Prefix"
           backend {
             service {
-              name = kubernetes_service_v1.my-finances-dbt-service.metadata.0.name
+              name = kubernetes_service_v1.my_finances_dbt_service.metadata.0.name
               port {
                 name = "http"
               }

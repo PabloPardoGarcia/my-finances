@@ -1,3 +1,3 @@
-output "storage-class-name" {
-  value = kubernetes_storage_class_v1.local-storage-class.metadata.0.name
+output "storage_class_name" {
+  value = kubernetes_storage_class_v1.local_storage_class.metadata.0.name
 }

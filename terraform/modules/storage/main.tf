@@ -1,4 +1,4 @@
-resource "kubernetes_storage_class_v1" "local-storage-class" {
+resource "kubernetes_storage_class_v1" "local_storage_class" {
   storage_provisioner = "kubernetes.io/no-provisioner"
   metadata {
     name = var.local_storage_class_name

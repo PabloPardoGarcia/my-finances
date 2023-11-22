@@ -1,4 +1,4 @@
-resource "kubernetes_deployment_v1" "postgres-deployment" {
+resource "kubernetes_deployment_v1" "postgres_deployment" {
   metadata {
     name = var.postgres_name
     namespace = var.postgres_namespace
@@ -57,7 +57,7 @@ resource "kubernetes_deployment_v1" "postgres-deployment" {
   }
 }
 
-resource "kubernetes_service_v1" "postgres-service" {
+resource "kubernetes_service_v1" "postgres_service" {
   metadata {
     name = var.postgres_name
     namespace = var.postgres_namespace
