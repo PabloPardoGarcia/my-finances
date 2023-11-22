@@ -30,6 +30,14 @@ models:
         description: Amount of the booking
       - name: amount_currency
         description: Currency unit for the amount column
+      - name: inserted_at
+        description:
+      - name: category_name
+        description: Transaction category name
+      - name: category_created_at
+        description: Timestamp when the transaction was first categorized
+      - name: category_updated_at
+        description: Timestamo when the transaction was last categorized
 
   - name: earnings
     description: Transactions reflecting earnings

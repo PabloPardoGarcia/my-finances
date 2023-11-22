@@ -28,3 +28,28 @@ models:
         description: Currency unit for the amount column
       - name: inserted_at
         description: Timestamp when the record was inserted
+
+  - name: base_categories
+    description: List of categories available to categorize transactions
+    columns:
+      - name: category_id
+        description: Category ID
+        tests:
+          - unique
+          - not_null
+      - name: category_name
+        description: Category Name
+      - name: created_at
+        description: Timestamp when the category was created
+
+  - name: base_transaction_categories
+    description: Table with the categories of each transaction
+    columns:
+      - name: transaction_id
+        description: Transaction ID
+      - name: categoriy_id
+        description: Category ID
+      - name: created_at
+        description: Timestamp when the transaction was categorized for the first time
+      - name: updated_at
+        description: Timestamp when the transaction was last categorized
