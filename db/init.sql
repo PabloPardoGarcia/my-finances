@@ -9,28 +9,35 @@ CREATE TABLE sources.transactions(
     balance TEXT,
     balance_currency TEXT,
     amount TEXT,
-    amount_currency TEXT
+    amount_currency TEXT,
+    inserted_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 COPY sources.transactions (
         booking, value_date, client_recipient, booking_text, purpose,
         balance, balance_currency, amount, amount_currency
     )
-FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/dataset.csv'
+FROM PROGRAM 'tail -n +15 /docker-entrypoint-initdb.d/transactions.csv'
 DELIMITER ';'
 CSV;
 
 CREATE TABLE sources.categories(
     category_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     name TEXT,
-    created_at TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+COPY sources.categories (name)
+FROM '/docker-entrypoint-initdb.d/categories.csv'
+DELIMITER ','
+CSV
+HEADER;
 
 CREATE TABLE sources.transaction_categories(
     transaction_id INTEGER,
     category_id INTEGER,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_transaction
         FOREIGN KEY (transaction_id)
             REFERENCES sources.transactions(transaction_id),

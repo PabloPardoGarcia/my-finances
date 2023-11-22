@@ -14,5 +14,6 @@ SELECT
     replace(replace(balance, '.', ''), ',', '.')::decimal AS balance,
     balance_currency,
     replace(replace(amount, '.', ''), ',', '.')::decimal AS amount,
-    amount_currency
+    amount_currency,
+    inserted_at
 FROM source

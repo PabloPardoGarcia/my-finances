@@ -26,3 +26,5 @@ models:
         description: Amount of the booking
       - name: amount_currency
         description: Currency unit for the amount column
+      - name: inserted_at
+        description: Timestamp when the record was inserted
