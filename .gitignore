@@ -4,6 +4,5 @@
 **/*.log
 **/*.secret.*
 !**/*.secret.enc.*
-*.csv
 .git-crypt
 .DS_Store

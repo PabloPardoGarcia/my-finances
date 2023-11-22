@@ -31,7 +31,7 @@ models:
       - name: amount_currency
         description: Currency unit for the amount column
       - name: inserted_at
-        description:
+        description: Timestamp when the transaction was inserted in the database
       - name: category_name
         description: Transaction category name
       - name: category_created_at
