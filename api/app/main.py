@@ -17,7 +17,8 @@ database = Database(
 
 app = FastAPI(
     title="My Finances Uploader App",
-    version="0.0.0"
+    version="0.0.0",
+    root_path="/api"
 )
 
 
