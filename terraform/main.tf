@@ -36,10 +36,17 @@ module "api" {
   postgres_secrets_name = module.db.secret_name
 }
 
+module "frontend" {
+  source = "./modules/frontend"
+  namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
+  frontend_image = "my-finances-frontend"
+}
+
 module "ingress_controller" {
   source = "./modules/ingress"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
   site_url = "mysites.internal"
   dbt_service_name = module.dbt.service_name
   api_service_name = module.api.service_name
+  frontend_service_name = module.frontend.service_name
 }

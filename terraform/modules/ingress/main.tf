@@ -6,10 +6,6 @@ resource "helm_release" "ingress_nginx_release" {
   create_namespace = true
   namespace = var.ingres_controller_namespace
   version = var.helm_version
-
-  values = [
-
-  ]
 }
 
 resource "kubernetes_ingress_v1" "my_finances_ingress" {
@@ -25,12 +21,29 @@ resource "kubernetes_ingress_v1" "my_finances_ingress" {
     }
   }
   spec {
+    rule {
+      host = var.site_url
+      http {
+        path {
+          path = "/()(.*)"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = var.frontend_service_name
+              port {
+                name = "http"
+              }
+            }
+          }
+        }
+      }
+    }
 
     rule {
       host = var.site_url
       http {
         path {
-          path = "/(api[/|$])((.*)"
+          path = "/(api[/|$])(.*)"
           path_type = "Prefix"
           backend {
             service {

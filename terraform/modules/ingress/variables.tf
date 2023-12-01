@@ -29,3 +29,8 @@ variable "api_service_name" {
   type = string
   description = "API service name"
 }
+
+variable "frontend_service_name" {
+  type = string
+  description = "Frontend service name"
+}
