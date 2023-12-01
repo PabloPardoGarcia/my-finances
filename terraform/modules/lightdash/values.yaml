@@ -1,6 +1,0 @@
-
-secrets:
-  LIGHTDASH_SECRET: dasfdaefdad
-
-service:
-  type: NodePort

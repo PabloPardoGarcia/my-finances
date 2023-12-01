@@ -53,8 +53,7 @@ variable "namespace" {
   description = "PVC Namespace"
 }
 
-variable "labels" {
-  type = map(string)
-  description = "Labels for the PV and PVC"
-  default = {}
+variable "db_name" {
+  type = string
+  description = "PostgreSQL service name"
 }

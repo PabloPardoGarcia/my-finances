@@ -28,18 +28,12 @@ variable "dbt_image" {
   description = "dbt image name"
 }
 
-variable "uploader_image" {
+variable "postgres_service_name" {
   type = string
-  description = "uploader image name"
+  description = "PostrgreSQL service name"
 }
 
-variable "storage_class_name" {
+variable "postgres_secrets_name" {
   type = string
-  description = "Storage Class Name"
-  default = "local-storage-class"
-}
-
-variable "site_url" {
-  type = string
-  description = "Site URL"
+  description = "Name of the PostrgreSQL secret with the credentials"
 }
