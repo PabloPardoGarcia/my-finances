@@ -1,0 +1,6 @@
+[server]
+port = 80
+fileWatcherType = "none"
+
+[browser]
+gatherUsageStats = false
