@@ -5,7 +5,6 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
-jinja2 = "*"
 python-multipart = "*"
 uvicorn = {version="*", extras=["standard"]}
 psycopg2-binary = "*"
