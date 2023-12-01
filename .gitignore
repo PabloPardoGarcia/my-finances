@@ -6,3 +6,7 @@
 !**/*.secret.enc.*
 .git-crypt
 .DS_Store
+**/.env
+**/.pytest_cache/
+**/__py_cache__/
+__pycache__/
