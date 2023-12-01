@@ -16,8 +16,6 @@ Welcome to My Finances repository!
 title: Architecture Diagram
 ---
 flowchart TB
-    %% Graph definition
-    subgraph my-finances
         subgraph dbt
             s1[[dbt-docs service]];
             web1([dbt documantation]);
@@ -25,32 +23,23 @@ flowchart TB
             s1 --> web1
             s2 <--> s1
         end
-        subgraph uploader
-            s3[["uploader service"]]
-            web3(["uploader UI"]);
+        subgraph webapp
+            s3[["FastAPI service"]]
+            web2(["Streamlit App"]);
+            web3(["API docs"]);
             s3 --> s1
+            web2 <--> s3
             web3 <--> s3
         end
         db1[(postgres)];
         s1 --> db1
         s3 --> db1
-        
-    end
-    subgraph lightdash
-        sb2[(internal db)];
-        s4[[lightdash server]];
-        web2([Lightdash web]);
-        sb2 <--> s4 
-        s4 --> web2
-    end
-    db1 --> s4
-    
+
     %% Interactions
     click web1 "https://docs.getdbt.com/docs/collaborate/documentation" _blank
-    click web2 "https://www.lightdash.com/" _blank
-    
-    %% Styling
-    classDef todoclass fill:#f96,stroke:#f50
+    click web2 "https://docs.streamlit.io/" _blank
+    click web3 "https://fastapi.tiangolo.com/#interactive-api-docs" _blank
+
 ```
 
 ## Getting Started
@@ -74,10 +63,10 @@ Before you can deploy this project, you'll need the following:
 
 2. Configure extract data format. Each bank formats the transactions statement slightly different.
    - Update [`init.sql`](db/init.sql) script to create the initial tables with your specific format.
-   - Modify [dbt source model](dbt/my_finances/models/staging/ing/src_ing.yml) accordingly
+   - Modify [dbt source model](dbt/my_finances/models/staging/src_ing.yml) accordingly
    - Modify downstream dbt models if needed
 
-3. Build dbt and uploader docker images:
+3. Build dbt, api and frontend docker images:
 
    ```shell
    cd dbt
@@ -85,8 +74,13 @@ Before you can deploy this project, you'll need the following:
    ```
    
     ```shell
-   cd uploader
-   docker build -f Dockerfile -t my-finances-uploader .
+   cd api
+   docker build -f Dockerfile -t my-finances-api .
+   ```
+   
+    ```shell
+   cd frontend
+   docker build -f Dockerfile -t my-finances-frontend .
    ```
 
 4. Configure [sops with age](https://github.com/getsops/sops#encrypting-using-age). 
