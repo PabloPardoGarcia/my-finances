@@ -9,7 +9,8 @@ RUN pip install pipenv --no-cache-dir && \
     pipenv install --dev --system --deploy
 COPY app /code/app
 COPY tests /code/tests
-CMD ["pytest", "tests/", "-v"]
+COPY entrypoint.test.sh /code/
+ENTRYPOINT ["/bin/bash", "/code/entrypoint.test.sh"]
 
 FROM base
 WORKDIR /code
