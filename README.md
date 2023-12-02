@@ -109,9 +109,9 @@ The project is tests with GitHub Actions. For the workflows to work on a forked 
 you need to add these GitHub secrets: 
 
 - **Docker credentials**
-  - `DOCKER_REPOSITORY`: Docker Repository where to push and pull images from (e.g. `ghcr.io` tu publish in GitHub Container Registry (GHCR))
+  - `DOCKER_REPOSITORY`: Docker Repository where to push and pull images from (e.g. `ghcr.io` tu publish in GitHub Container Registry)
   - `DOCKER_USERNAME`: Docker username to login into the repository (e.g. `pablopardogarcia` or your GitHub username to publish in GHCR)
-  - `DOCKER_PASSWORD`: Docker password to login into the repository (e.g. your GitHub Personal Access Token to publish in GHRC)
+  - `DOCKER_PASSWORD`: Docker password to login into the repository (e.g. your GitHub Personal Access Token to publish in GHCR)
 - **Postgres credentials**
   - `POSTGRES_HOST`: Postgres server host
   - `POSTGRES_USER`: Postgres user
