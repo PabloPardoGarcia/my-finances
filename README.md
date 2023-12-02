@@ -106,4 +106,4 @@ terraform apply
 ### Test
 
 The project is tests with GitHub Actions. For the workflows to work on a forked repository
-you need to change the environment variable `DOCKER_REPOSITORY` withing the workflow configuration.
+you need to change the docker image tags to point at your registry withing the workflow configuration.
