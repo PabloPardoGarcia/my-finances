@@ -41,7 +41,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: $DOCKER_REPOSITORY/my-finances-api:test
+          tags: "$DOCKER_REPOSITORY/my-finances-api:test"
           target: test
 
       - name: Run Test image
