@@ -9,7 +9,7 @@ RUN pip install pipenv --no-cache-dir && \
     pipenv install --dev --system --deploy
 COPY app /code/app
 COPY tests /code/tests
-CMD ["pytest", "tests/"]
+CMD ["pytest", "tests/", "-v"]
 
 FROM base
 WORKDIR /code
