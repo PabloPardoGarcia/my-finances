@@ -45,7 +45,7 @@ jobs:
         if: steps.filter.outputs.api == 'true'
         uses: addnab/docker-run-action@v3
         with:
-          image: my-finances-api:test
+          image: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-api:test
           options: |
             -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
             -e POSTGRES_USER=${{ secrets.POSTGRES_USER }}
