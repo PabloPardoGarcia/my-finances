@@ -1,8 +1,4 @@
-
-import os
-
 import streamlit as st
-
 
 st.set_page_config(
     page_title="My Finances",
@@ -11,7 +7,9 @@ st.set_page_config(
 
 st.write("# Welcome to My Finances! 👋")
 
-st.sidebar.success("Select a demo above.")
+with st.sidebar:
+    st.link_button(label="`dbt` documentation", url="/dbt/")
+    st.link_button(label="API documentation", url="/api/docs")
 
 st.markdown(
     """
@@ -30,6 +28,3 @@ st.markdown(
     - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
 """
 )
-
-st.link_button(label="`dbt` documentation", url="/dbt/")
-st.link_button(label="API documentation", url="/api/docs")
