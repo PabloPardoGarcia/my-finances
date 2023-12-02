@@ -1,13 +1,14 @@
+from typing import IO, List, Optional
+
 import psycopg2
-from typing import List, Optional, IO
 
 
 def copy_file(
-        file: IO,
-        connection_str: str,
-        table_name: str,
-        table_cols: Optional[List[str]] = None,
-        options: Optional[List[str]] = None
+    file: IO,
+    connection_str: str,
+    table_name: str,
+    table_cols: Optional[List[str]] = None,
+    options: Optional[List[str]] = None,
 ):
     """Copy file to database"""
     conn = None
@@ -18,8 +19,7 @@ def copy_file(
         table_cols_str = f"({', '.join(table_cols)})" if table_cols is not None else ""
         options_str = f"WITH {' '.join(options)}" if options is not None else ""
         cursor.copy_expert(
-            sql=f"COPY {table_name}{table_cols_str} FROM STDIN {options_str}",
-            file=file
+            sql=f"COPY {table_name}{table_cols_str} FROM STDIN {options_str}", file=file
         )
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:

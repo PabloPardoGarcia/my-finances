@@ -1,4 +1,5 @@
 from unittest import mock
+
 from app.db import get_table_size
 
 
@@ -8,7 +9,9 @@ def test_get_table_size(mock_connect):
     mock_cur = mock_con.cursor.return_value
     mock_cur.fetchone.return_value = (42,)
 
-    result = get_table_size(table_name="fake_table", connection_str="fake_connection_str")
+    result = get_table_size(
+        table_name="fake_table", connection_str="fake_connection_str"
+    )
 
     assert result == 42
 
