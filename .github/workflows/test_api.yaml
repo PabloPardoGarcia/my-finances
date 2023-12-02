@@ -34,12 +34,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: PabloPardoGarcia/my-finances-api:test
+          tags: ghcr.io/pablopardogarcia/my-finances-api:test
           target: test
 
       - name: Run Test image
         if: steps.filter.outputs.api == 'true'
-        uses: docker/run-action@v3
+        uses: addnab/docker-run-action@v3
         with:
           image: my-finances-api:test
           options: |
