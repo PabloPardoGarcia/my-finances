@@ -11,7 +11,7 @@ COPY app /code/app
 COPY tests /code/tests
 CMD ["pytest", "tests/"]
 
-FROM base as latest
+FROM base
 WORKDIR /code
 RUN pip install pipenv --no-cache-dir && \
     pipenv install --system --deploy
