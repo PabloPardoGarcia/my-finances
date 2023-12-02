@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test_api:
+  publish_image:
     name: Publish API image
     runs-on: ubuntu-latest
     defaults:

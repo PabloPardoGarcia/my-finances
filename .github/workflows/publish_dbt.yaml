@@ -1,11 +1,11 @@
-name: Publish API image
+name: Publish dbt image
 on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
-  test_api:
+  publish_image:
     name: Publish dbt image
     runs-on: ubuntu-latest
     defaults:
