@@ -1,16 +1,10 @@
-from .models import Database
-
 import psycopg2
 from typing import List, Optional, IO
 
 
-def connect_db(database: Database):
-    return psycopg2.connect(database.get_connection_str())
-
-
 def copy_file(
         file: IO,
-        database: Database,
+        connection_str: str,
         table_name: str,
         table_cols: Optional[List[str]] = None,
         options: Optional[List[str]] = None
@@ -18,7 +12,7 @@ def copy_file(
     """Copy file to database"""
     conn = None
     try:
-        conn = connect_db(database)
+        conn = psycopg2.connect(connection_str)
         cursor = conn.cursor()
 
         table_cols_str = f"({', '.join(table_cols)})" if table_cols is not None else ""
@@ -35,10 +29,10 @@ def copy_file(
             conn.close()
 
 
-def get_table_size(table_name: str, database: Database) -> int:
+def get_table_size(table_name: str, connection_str: str) -> int:
     conn = None
     try:
-        conn = connect_db(database)
+        conn = psycopg2.connect(connection_str)
         cursor = conn.cursor()
         cursor.execute(f"SELECT count(*) FROM {table_name}")
         table_size = cursor.fetchone()[0]

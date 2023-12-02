@@ -36,10 +36,13 @@ def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotat
         )
 
     try:
-        table_count_before = get_table_size(table_name=table_name, database=database)
+        table_count_before = get_table_size(
+            table_name=table_name,
+            connection_str=database.get_connection_str()
+        )
         copy_file(
             file=file.file,
-            database=database,
+            connection_str=database.get_connection_str(),
             table_name=table_name,
             table_cols=[
                 "booking", "value_date", "client_recipient",
@@ -48,7 +51,10 @@ def upload_csv_to_table(file: Annotated[UploadFile, File()], table_name: Annotat
             ],
             options=["HEADER", "CSV", "DELIMITER ';'"]
         )
-        table_count_after = get_table_size(table_name=table_name, database=database)
+        table_count_after = get_table_size(
+            table_name=table_name,
+            connection_str=database.get_connection_str()
+        )
     except Exception as e:
         return {"message": f"There was an error uploading the file. {e}"}
     finally:
