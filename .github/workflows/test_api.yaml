@@ -1,5 +1,11 @@
+env:
+  DOCKER_REPOSITORY: ghcr.io/pablopardogarcia
+
 name: Test API App
-on: push
+on:
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
   test_api:
@@ -34,7 +40,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/pablopardogarcia/my-finances-api:test
+          tags: $DOCKER_REPOSITORY/my-finances-api:test
           target: test
 
       - name: Run Test image

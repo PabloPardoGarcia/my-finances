@@ -102,3 +102,8 @@ terraform init
 terraform plan
 terraform apply
 ```
+
+### Test
+
+The project is tests with GitHub Actions. For the workflows to work on a forked repository
+you need to change the environment variable `DOCKER_REPOSITORY` withing the workflow configuration.
