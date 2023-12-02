@@ -2,11 +2,15 @@
 
 This module allows communication with My Finances via API.
 
+## Build Image
+
+Run this command to build the image of the FastAPI service:
+
 ```shell
 docker build -f Dockerfile -t my-finances-api .
 ```
 
-## Test
+## Test Locally
 
 To run the tests on the API, you need to create an `.env` file like this:
 ```shell
