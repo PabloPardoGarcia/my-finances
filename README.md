@@ -6,6 +6,7 @@
   - [Prerequisites](#prerequisites)
   - [Configuration](#configuration)
   - [Deployment](#deployment)
+- [Testing](#testing)
 
 ## Introduction
 
@@ -103,9 +104,9 @@ terraform plan
 terraform apply
 ```
 
-### Test
+### Testing
 
-The project is tests with GitHub Actions. For the workflows to work on a forked repository
+The project is tested with GitHub Actions. For the workflows to work on a forked repository
 you need to add these GitHub secrets: 
 
 - **Docker credentials**
