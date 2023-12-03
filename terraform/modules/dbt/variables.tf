@@ -37,3 +37,8 @@ variable "postgres_secrets_name" {
   type = string
   description = "Name of the PostrgreSQL secret with the credentials"
 }
+
+variable "docker_config_secret" {
+  type = string
+  description = "Secret name containing the dockerconfigjson"
+}

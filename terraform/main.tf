@@ -4,6 +4,27 @@ resource "kubernetes_namespace" "my_finances_namespace" {
   }
 }
 
+resource "kubernetes_secret_v1" "docker_config" {
+  type = "kubernetes.io/dockerconfigjson"
+  metadata {
+    name = "docker-config"
+    namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
+    labels = {
+      "app.kubernetes.io/name" : kubernetes_namespace.my_finances_namespace.metadata.0.name
+    }
+  }
+  data = {
+    ".dockerconfigjson": jsonencode({
+      "auths" = {
+        "https://ghcr.io" = {
+          "auth": base64encode("${data.sops_file.dockerconfig_secret.data["username"]}:${data.sops_file.dockerconfig_secret.data["github_pat"]}")
+        }
+      }
+    })
+  }
+}
+
+
 module "db" {
   source = "./modules/db"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
@@ -19,27 +40,30 @@ module "db" {
 module "dbt" {
   source = "./modules/dbt"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
-  dbt_image = "my-finances-dbt"
+  dbt_image = "ghcr.io/pablopardogarcia/my-finances-dbt:latest"
   git_sync_git_repo = "https://github.com/PabloPardoGarcia/my-finances"
   git_sync_image = "registry.k8s.io/git-sync/git-sync:v4.0.0"
   git_sync_path_to_dbt = "my-finances/dbt/my_finances"
   git_sync_path_to_dbt_profiles = "my-finances/dbt/profiles.yml"
   postgres_service_name = module.db.service_name
   postgres_secrets_name = module.db.secret_name
+  docker_config_secret = kubernetes_secret_v1.docker_config.metadata.0.name
 }
 
 module "api" {
   source = "./modules/api"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
-  api_image = "my-finances-api"
+  api_image = "ghcr.io/pablopardogarcia/my-finances-api:latest"
   postgres_service_name = module.db.service_name
   postgres_secrets_name = module.db.secret_name
+  docker_config_secret = kubernetes_secret_v1.docker_config.metadata.0.name
 }
 
 module "frontend" {
   source = "./modules/frontend"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
-  frontend_image = "my-finances-frontend"
+  frontend_image = "ghcr.io/pablopardogarcia/my-finances-frontend:latest"
+  docker_config_secret = kubernetes_secret_v1.docker_config.metadata.0.name
 }
 
 module "ingress_controller" {

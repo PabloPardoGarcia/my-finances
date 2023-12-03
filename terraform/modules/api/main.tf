@@ -64,6 +64,9 @@ resource "kubernetes_deployment_v1" "my_finances_api_deployment" {
             value = var.postgres_service_name
           }
         }
+        image_pull_secrets {
+          name = var.docker_config_secret
+        }
       }
     }
   }
