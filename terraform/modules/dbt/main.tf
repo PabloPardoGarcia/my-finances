@@ -70,6 +70,10 @@ resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
           }
         }
 
+        image_pull_secrets {
+          name = var.docker_config_secret
+        }
+
         container {
           name  = "dbt"
           image = var.dbt_image

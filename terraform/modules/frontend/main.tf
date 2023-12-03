@@ -22,6 +22,10 @@ resource "kubernetes_deployment_v1" "my_finances_frontend_deployment" {
         }
       }
       spec {
+        image_pull_secrets {
+          name = var.docker_config_secret
+        }
+
         container {
           name = "frontend"
           image = var.frontend_image
