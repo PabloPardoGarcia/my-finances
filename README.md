@@ -10,7 +10,8 @@
   - [Secrets Encoding](#secrets-encoding)
   - [Database Format](#database-format)
   - [Build and Publish Images](#build-and-publish-images)
-  - [GitHub Container Registry](#github-container-registry)
+  - [Terraform Secrets](#terraform-secrets)
+  - [Terraform](#terraform)
 - [Deployment](#deployment)
 - [Testing](#testing)
 
