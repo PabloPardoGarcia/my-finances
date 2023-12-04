@@ -1,0 +1,1 @@
+yamllint -f github --no-warnings .
