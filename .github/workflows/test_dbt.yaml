@@ -36,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./dbt
-          file: ./frontend/Dockerfile
+          file: ./dbt/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-dbt:test
           target: test
