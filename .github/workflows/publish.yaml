@@ -70,7 +70,6 @@ jobs:
           registry: ${{ secrets.DOCKER_REPOSITORY }}
 
       - name: Build and push Docker image
-        if: steps.filter.outputs.frontend == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
@@ -96,7 +95,6 @@ jobs:
           registry: ${{ secrets.DOCKER_REPOSITORY }}
 
       - name: Build and push Docker image
-        if: steps.filter.outputs.dbt == 'true'
         uses: docker/build-push-action@v5
         with:
           context: ./dbt
