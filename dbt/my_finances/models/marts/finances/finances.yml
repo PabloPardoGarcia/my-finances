@@ -11,7 +11,8 @@ models:
           - unique
         meta:
           metrics:
-            transactions_count: count
+            transactions_count:
+              type: count
       - name: booking_date
         description: Date when the transaction was booked
       - name: value_date
@@ -19,7 +20,9 @@ models:
       - name: client_recipient
         description: Client / Recipient
       - name: booking_text
-        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+        description: |
+          Booking text (often describing the type of booking, i.e.
+          credit, debit, fee, etc.)
       - name: purpose
         description: Transaction description
       - name: balance
@@ -31,7 +34,8 @@ models:
       - name: amount_currency
         description: Currency unit for the amount column
       - name: inserted_at
-        description: Timestamp when the transaction was inserted in the database
+        description: |
+          Timestamp when the transaction was inserted in the database
       - name: category_name
         description: Transaction category name
       - name: category_created_at
@@ -54,7 +58,9 @@ models:
       - name: client_recipient
         description: Client / Recipient
       - name: booking_text
-        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+        description: |
+          Booking text (often describing the type of booking, i.e.
+          credit, debit, fee, etc.)
       - name: purpose
         description: Transaction description
       - name: amount
@@ -81,7 +87,9 @@ models:
       - name: client_recipient
         description: Client / Recipient
       - name: booking_text
-        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+        description: |
+          Booking text (often describing the type of booking, i.e.
+          credit, debit, fee, etc.)
       - name: purpose
         description: Transaction description
       - name: amount

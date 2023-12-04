@@ -15,7 +15,9 @@ models:
       - name: client_recipient
         description: Client / Recipient
       - name: booking_text
-        description: Booking text (often describing the type of booking, i.e. credit, debit, fee, etc.)
+        description: |
+          Booking text (often describing the type of booking, i.e.
+          credit, debit, fee, etc.)
       - name: purpose
         description: Transaction description
       - name: balance
@@ -50,6 +52,7 @@ models:
       - name: categoriy_id
         description: Category ID
       - name: created_at
-        description: Timestamp when the transaction was categorized for the first time
+        description: |
+          Timestamp when the transaction was categorized for the first time
       - name: updated_at
         description: Timestamp when the transaction was last categorized
