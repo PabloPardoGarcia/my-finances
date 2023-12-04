@@ -1,6 +1,8 @@
+import logging
 import requests
 import streamlit as st
 
+logger = logging.getLogger(st.__name__)
 st.set_page_config(
     page_title="Upload Finances Data",
     page_icon=":floppy_disk:",
@@ -22,14 +24,17 @@ table_name = st.selectbox(
 
 if uploaded_file and table_name:
     files = {
-        "file": (uploaded_file.name, uploaded_file.read(), "application/csv"),
+        "file": (uploaded_file.name, uploaded_file.read(), "text/csv"),
     }
     payload = {"table_name": f"sources.{table_name}"}
 
+    logger.info(f"Uploading file called {uploaded_file.name} to table {table_name}")
     response = requests.post(
-        url="http://mysites.internal/api/upload", files=files, data=payload
+        url="http://my-finances-api/upload", files=files, data=payload
     )
+    logger.info(response.text)
+
     if response.status_code != 200:
-        st.error(response.text)
+        st.error(response.json()["message"])
     else:
         st.success(response.text)
