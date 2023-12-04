@@ -1,7 +1,7 @@
 FROM python:3.10-slim as test
 WORKDIR "/code"
 COPY my_finances /code
-COPY ["Pipfile", "Pipfile.lock", ".yamllint", "/code/"]
+COPY ["Pipfile", "Pipfile.lock", ".yamllint", ".sqlfluff", "/code/"]
 
 RUN pip install pipenv --no-cache-dir && \
     pipenv install --system --deploy --dev
