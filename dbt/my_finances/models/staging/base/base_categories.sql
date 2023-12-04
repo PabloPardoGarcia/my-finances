@@ -6,6 +6,6 @@ WITH source AS (
 
 SELECT
     category_id,
-    name as category_name,
+    name AS category_name,
     created_at
 FROM source
