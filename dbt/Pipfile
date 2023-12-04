@@ -8,6 +8,7 @@ dbt-postgres="*"
 
 [dev-packages]
 yamllint="*"
+sqlfluff="*"
 
 [requires]
 python_version = "3.10"
