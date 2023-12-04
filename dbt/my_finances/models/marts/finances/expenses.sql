@@ -11,7 +11,7 @@ SELECT
     client_recipient,
     booking_text,
     purpose,
-    abs(amount) as amount,
+    abs(amount) AS amount,
     amount_currency
 FROM base
 WHERE amount < 0

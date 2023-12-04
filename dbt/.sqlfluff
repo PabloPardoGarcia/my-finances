@@ -1,0 +1,6 @@
+[sqlfluff]
+templater = jinja
+dialect = postgres
+
+# Exclude Rules
+exclude_rules = ST06
