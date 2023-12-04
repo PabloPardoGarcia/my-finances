@@ -1,0 +1,4 @@
+ignore: |
+  dbt_packages/
+
+extends: default
