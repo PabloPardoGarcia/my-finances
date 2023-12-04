@@ -28,7 +28,7 @@ jobs:
               - 'frontend/**'
 
   api:
-    name: Run api tests
+    name: api
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
@@ -64,7 +64,7 @@ jobs:
             -e POSTGRES_DB=${{ secrets.POSTGRES_DB }}
 
   frontend:
-    name: Run frontend tests
+    name: frontend
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' }}
@@ -100,7 +100,7 @@ jobs:
             -e POSTGRES_DB=${{ secrets.POSTGRES_DB }}
 
   dbt:
-    name: Run dbt tests
+    name: dbt
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.dbt == 'true' }}

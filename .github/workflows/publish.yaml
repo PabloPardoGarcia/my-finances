@@ -27,7 +27,7 @@ jobs:
               - 'frontend/**'
 
   api:
-    name: Publish api image
+    name: api
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
@@ -52,7 +52,7 @@ jobs:
           tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-api:latest
 
   frontend:
-    name: Publish frontend image
+    name: frontend
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' }}
@@ -78,7 +78,7 @@ jobs:
           tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-frontend:latest
 
   dbt:
-    name: Publish dbt image
+    name: dbt
     runs-on: ubuntu-latest
     needs: changes
     if: ${{ needs.changes.outputs.dbt == 'true' }}
