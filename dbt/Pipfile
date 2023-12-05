@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 dbt-postgres="*"
+fastapi="*"
+uvicorn = {version="*", extras=["standard"]}
 
 [dev-packages]
 yamllint="*"
