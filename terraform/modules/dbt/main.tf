@@ -28,9 +28,14 @@ resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
           name  = "dbt"
           image = var.dbt_image
           image_pull_policy = "IfNotPresent"
+
           port {
             container_port = 8080
             name           = "docs-port"
+          }
+          port {
+            container_port = 8000
+            name           = "api-port"
           }
 
           env {
@@ -85,6 +90,11 @@ resource "kubernetes_service_v1" "my_finances_dbt_service" {
       name = "http"
       port = 80
       target_port = "docs-port"
+    }
+    port {
+      name = "api"
+      port = 8000
+      target_port = "api-port"
     }
     selector = {
       "app.kubernetes.io/name": var.namespace
