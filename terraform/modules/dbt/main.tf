@@ -1,14 +1,3 @@
-resource "kubernetes_secret_v1" "git_credentials" {
-  metadata {
-    name = "git-credentials"
-    namespace = var.namespace
-  }
-  data = {
-    "ssh": base64encode(jsonencode(data.sops_file.git_sync_secret.data["ssh-key-file"]))
-    "known_hosts": base64encode(jsonencode(data.sops_file.git_sync_secret.data["known-hosts"]))
-  }
-}
-
 resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
   metadata {
     name = "${var.namespace}-dbt"
@@ -31,45 +20,6 @@ resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
         }
       }
       spec {
-        volume {
-          name = "git-sync-content"
-        }
-        volume {
-          name = "git-sync-secret"
-          secret {
-            secret_name = kubernetes_secret_v1.git_credentials.metadata.0.name
-            default_mode = "0400"
-          }
-        }
-
-        init_container {
-          name = "dbt-repo-setup"
-          image = var.git_sync_image
-          args = [
-            "--repo=${var.git_sync_git_repo}",
-            "--branch=master",
-            "--depth=1",
-            "--max-failures=6",
-            "--one-time=true",  # exit after the first sync (we just want to initialize the file system)
-            "--period=10s",
-            "--root=/git",
-            "--ssh=true",
-            "--ssh-known-hosts=true"
-          ]
-          security_context {
-            run_as_user = "65533" # git-sync-user
-          }
-          volume_mount {
-            mount_path = "/git"
-            name       = "git-sync-content"
-          }
-          volume_mount {
-            mount_path = "/etc/git-secret"
-            name       = "git-sync-secret"
-            read_only = true
-          }
-        }
-
         image_pull_secrets {
           name = var.docker_config_secret
         }
@@ -114,50 +64,6 @@ resource "kubernetes_deployment_v1" "my_finances_dbt_deployment" {
             name = "POSTGRES_HOST"
             value = var.postgres_service_name
           }
-
-          volume_mount {
-            mount_path = "/usr/app"
-            name       = "git-sync-content"
-            sub_path   = var.git_sync_path_to_dbt
-          }
-          volume_mount {
-            mount_path = "/root/.dbt/profiles.yml"
-            name       = "git-sync-content"
-            sub_path   = var.git_sync_path_to_dbt_profiles
-            read_only = true
-          }
-        }
-
-        container {
-          name = "git-sync"
-          image = var.git_sync_image
-          args = [
-            "--repo=${var.git_sync_git_repo}",
-            "--branch=master",
-            "--depth=1",
-            "--max-failures=-1",
-            "--period=60s",
-            "--root=/git",
-            "--add-user",
-            "--ssh",
-            "--ssh-known-hosts"
-          ]
-          security_context {
-            run_as_user = "65533" # git-sync-user
-          }
-          volume_mount {
-            mount_path = "/git"
-            name       = "git-sync-content"
-          }
-          volume_mount {
-            mount_path = "/etc/git-secret"
-            name       = "git-sync-secret"
-            read_only = true
-          }
-        }
-
-        security_context {
-          fs_group = "65533" # git-sync-user
         }
       }
     }
