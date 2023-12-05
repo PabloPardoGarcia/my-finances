@@ -41,10 +41,6 @@ module "dbt" {
   source = "./modules/dbt"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
   dbt_image = "ghcr.io/pablopardogarcia/my-finances-dbt:latest"
-  git_sync_git_repo = "https://github.com/PabloPardoGarcia/my-finances"
-  git_sync_image = "registry.k8s.io/git-sync/git-sync:v4.0.0"
-  git_sync_path_to_dbt = "my-finances/dbt/my_finances"
-  git_sync_path_to_dbt_profiles = "my-finances/dbt/profiles.yml"
   postgres_service_name = module.db.service_name
   postgres_secrets_name = module.db.secret_name
   docker_config_secret = kubernetes_secret_v1.docker_config.metadata.0.name
