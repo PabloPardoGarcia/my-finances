@@ -23,30 +23,41 @@ Welcome to My Finances repository!
 ---
 title: Architecture Diagram
 ---
-flowchart TB
-        subgraph dbt
-            s1[[dbt-docs service]];
-            web1([dbt documantation]);
-            s2[[git-sync]];
-            s1 --> web1
-            s2 <--> s1
-        end
-        subgraph webapp
-            s3[["FastAPI service"]]
-            web2(["Streamlit App"]);
-            web3(["API docs"]);
-            s3 --> s1
-            web2 <--> s3
-            web3 <--> s3
-        end
+flowchart LR
+    subgraph dbt
+        direction TB
+        s1[[dbt service]];
+        web1([dbt docs]);
+        web2([dbt api docs]);
+        s1 --> web1
+        s1 --> web2
+    end
+    subgraph frontend
+        direction TB
+        s4[["Streamlit App"]];
+        web3(["webapp"]);
+        s4 --> web3
+    end
+    subgraph db [backend db]
         db1[(postgres)];
-        s1 --> db1
-        s3 --> db1
+    end
+    subgraph backend
+        direction TB
+        s3[["FastAPI service"]];
+        web4(["api docs"]);
+        s3 --> web4
+    end
+
+    frontend --> backend
+    backend -- INSERT--> db
+    frontend -- READ --> db
+    dbt -- TRANSFORM --> db
+    backend --> dbt
 
     %% Interactions
     click web1 "https://docs.getdbt.com/docs/collaborate/documentation" _blank
-    click web2 "https://docs.streamlit.io/" _blank
-    click web3 "https://fastapi.tiangolo.com/#interactive-api-docs" _blank
+    click web3 "https://docs.streamlit.io/" _blank
+    click web4 "https://fastapi.tiangolo.com/#interactive-api-docs" _blank
 
 ```
 
