@@ -59,6 +59,8 @@ module "frontend" {
   source = "./modules/frontend"
   namespace = kubernetes_namespace.my_finances_namespace.metadata.0.name
   frontend_image = "ghcr.io/pablopardogarcia/my-finances-frontend:latest"
+  postgres_service_name = module.db.service_name
+  postgres_secrets_name = module.db.secret_name
   docker_config_secret = kubernetes_secret_v1.docker_config.metadata.0.name
 }
 

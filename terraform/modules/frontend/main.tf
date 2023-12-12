@@ -35,6 +35,38 @@ resource "kubernetes_deployment_v1" "my_finances_frontend_deployment" {
             container_port = 80
             name = "frontend"
           }
+
+          env {
+            name = "POSTGRES_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = var.postgres_secrets_name
+                key = "password"
+              }
+            }
+          }
+          env {
+            name = "POSTGRES_USER"
+            value_from {
+              secret_key_ref {
+                name = var.postgres_secrets_name
+                key = "user"
+              }
+            }
+          }
+          env {
+            name = "POSTGRES_DB"
+            value_from {
+              secret_key_ref {
+                name = var.postgres_secrets_name
+                key = "db"
+              }
+            }
+          }
+          env {
+            name = "POSTGRES_HOST"
+            value = var.postgres_service_name
+          }
         }
       }
     }
