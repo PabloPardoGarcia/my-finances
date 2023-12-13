@@ -5,7 +5,7 @@ WITH source AS (
 )
 
 SELECT
-    category_id,
+    id AS category_id,
     name AS category_name,
     created_at
 FROM source

@@ -1,6 +1,6 @@
 CREATE SCHEMA sources;
 CREATE TABLE sources.transactions(
-    transaction_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+    id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     booking TEXT,
     value_date TEXT,
     client_recipient TEXT,
@@ -14,7 +14,7 @@ CREATE TABLE sources.transactions(
 );
 
 CREATE TABLE sources.categories(
-    category_id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+    id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     name TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -26,14 +26,15 @@ CSV
 HEADER;
 
 CREATE TABLE sources.transaction_categories(
+    id INTEGER PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
     transaction_id INTEGER,
     category_id INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_transaction
-        FOREIGN KEY (transaction_id)
-            REFERENCES sources.transactions(transaction_id),
+        FOREIGN KEY (id)
+            REFERENCES sources.transactions(id),
     CONSTRAINT fk_category
-        FOREIGN KEY (category_id)
-            REFERENCES sources.categories(category_id)
+        FOREIGN KEY (id)
+            REFERENCES sources.categories(id)
 );

@@ -1,3 +1,7 @@
+#!/usr/bin/env bash
+set -e
+set +x
+
 echo "Running PyTest tests ..."
 pytest tests/ -v
 

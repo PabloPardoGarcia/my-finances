@@ -1,0 +1,80 @@
+services:
+  db:
+    image: postgres:14.3-alpine
+    restart: on-failure
+    environment:
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dbt:
+    image: ghcr.io/pablopardogarcia/my-finances-dbt:test
+    build:
+      context: ./dbt
+      target: test
+    container_name: my-finances-dbt
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    environment:
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend
+
+  api:
+    image: ghcr.io/pablopardogarcia/my-finances-api:test
+    build:
+      context: ./api
+      target: test
+    container_name: my-finances-api
+    ports:
+      - "8001:80"
+    environment:
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - frontend
+      - backend
+
+  frontend:
+    image: ghcr.io/pablopardogarcia/my-finances-frontend:test
+    build:
+      context: ./frontend
+      target: test
+    container_name: my-finances-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - frontend
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  db-postgres:
