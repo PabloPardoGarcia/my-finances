@@ -47,6 +47,11 @@ models:
   - name: base_transaction_categories
     description: Table with the categories of each transaction
     columns:
+      - name: transaction_category_id
+        description: Transaction Category ID
+        tests:
+          - unique
+          - not_null
       - name: transaction_id
         description: Transaction ID
       - name: categoriy_id

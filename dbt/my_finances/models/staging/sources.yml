@@ -9,7 +9,7 @@ sources:
     tables:
       - name: transactions
         columns:
-          - name: transaction_id
+          - name: id
             description: Unique transaction ID
             tests:
               - unique
@@ -40,7 +40,7 @@ sources:
       - name: categories
         description: List of categories available to categorize transactions
         columns:
-          - name: category_id
+          - name: id
             description: Category ID
             tests:
               - unique
@@ -53,6 +53,11 @@ sources:
       - name: transaction_categories
         description: Table with the categories of each transaction
         columns:
+          - name: id
+            description: Primary Key
+            tests:
+              - unique
+              - not_null
           - name: transaction_id
             description: Transaction ID
           - name: categoriy_id

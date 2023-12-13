@@ -5,7 +5,7 @@ WITH source AS (
 )
 
 SELECT
-    transaction_id,
+    id AS transaction_id,
     to_date(booking, 'DD.MM.YYYY') AS booking_date,
     to_date(value_date, 'DD.MM.YYYY') AS value_date,
     client_recipient,

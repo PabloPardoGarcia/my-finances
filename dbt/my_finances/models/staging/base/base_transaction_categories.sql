@@ -5,6 +5,7 @@ WITH source AS (
 )
 
 SELECT
+    id AS transaction_category_id,
     transaction_id,
     category_id,
     created_at,
