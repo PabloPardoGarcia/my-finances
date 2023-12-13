@@ -67,9 +67,10 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - db
-      - dbt
-      - api
+      db:
+        condition: service_healthy
+      dbt:
+      api:
     networks:
       - frontend
 
