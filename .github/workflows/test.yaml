@@ -42,7 +42,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
       - name: Run Tests
-        run: docker-compose -f docker-compose-tests.yaml up --build api
+        run: docker-compose -f docker-compose-tests.yaml up --build --exit-code-from api api
 
   frontend:
     name: frontend
@@ -54,7 +54,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
       - name: Run Tests
-        run: docker-compose -f docker-compose-tests.yaml up --build frontend
+        run: docker-compose -f docker-compose-tests.yaml up --build --exit-code-from frontend frontend
 
   dbt:
     name: dbt
@@ -66,4 +66,4 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
       - name: Run Tests
-        run: docker-compose -f docker-compose-tests.yaml up --build dbt
+        run: docker-compose -f docker-compose-tests.yaml up --build --exit-code-from dbt dbt
