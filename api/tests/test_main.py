@@ -37,7 +37,7 @@ def test_upload_transaction(client: TestClient):
     )
     with patch("builtins.open", mock_open(read_data=file_content)):
         files = {"file": ("fake_path.csv", open("fake_path.csv", "r"), "text/csv")}
-        payload = {"table_name": "sources.transactions"}
+        payload = {"table_name": "sources.transactions", "update_dbt": False}
         response = client.post("/upload", files=files, data=payload)
 
         assert response.status_code == 200, response.text
