@@ -1,11 +1,11 @@
 import codecs
 import csv
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas
+from . import crud, dbt, models, schemas
 from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
@@ -31,6 +31,7 @@ async def root():
 def upload(
     file: Annotated[UploadFile, File()],
     table_name: Annotated[str, Form()],
+    update_dbt: Annotated[bool, Form()] = True,
     db: Session = Depends(get_db),
 ):
     if file.content_type != "text/csv":
@@ -67,7 +68,6 @@ def upload(
             codecs.iterdecode(file.file, "utf-8"), delimiter=";", fieldnames=header
         )
         for row in reader:
-            print(row)
             crud_create(db=db, transaction=schema.model_validate(row))
             counts += 1
 
@@ -76,18 +76,24 @@ def upload(
     finally:
         file.file.close()
 
+    if update_dbt:
+        try:
+            print("running dbt")
+            dbt.run()
+            print("dbt update triggered")
+        except Exception as e:
+            return {"message": f"There was an error updating dbt models: {e}"}
+
     return {"message": f"Successfully added {counts} new {table_name}"}
 
 
-# @app.get("/query/{table_name}")
-# def query(table_name: str, limit: Optional[int] = None, offset: Optional[int] = None):
-#     try:
-#         table_json = fetch_table(
-#             table_name=table_name,
-#             connection_str=database.get_connection_str(),
-#             limit=limit,
-#             offset=offset
-#         )
-#     except Exception as e:
-#         return {"message": f"There was an error querying the table {table_name}. {e}"}
-#     return Response(table_json, media_type="application/json")
+@app.get("/transactions/", response_model=list[schemas.TransactionRead])
+def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    transactions = crud.get_transactions(db=db, skip=skip, limit=limit)
+    return transactions
+
+
+@app.get("/categories/", response_model=list[schemas.Category])
+def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    categories = crud.get_categories(db=db, skip=skip, limit=limit)
+    return categories
