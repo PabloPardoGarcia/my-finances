@@ -1,8 +1,7 @@
 services:
   db:
     image: postgres:14.3-alpine
-    hostname: my-finances-postgres
-    container_name: my-finances-postgres
+    hostname: ${POSTGRES_HOST}
     restart: on-failure
     environment:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -11,10 +10,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-#      - db-postgres:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d
     networks:
-      - my-net
+      - backend
 
   dbt:
     image: ghcr.io/pablopardogarcia/my-finances-dbt:test
@@ -33,7 +31,7 @@ services:
     depends_on:
       - db
     networks:
-      - my-net
+      - backend
 
   api:
     image: ghcr.io/pablopardogarcia/my-finances-api:test
@@ -51,7 +49,8 @@ services:
     depends_on:
       - db
     networks:
-      - my-net
+      - frontend
+      - backend
 
   frontend:
     image: ghcr.io/pablopardogarcia/my-finances-frontend:test
@@ -66,10 +65,11 @@ services:
       - dbt
       - api
     networks:
-      - my-net
+      - frontend
 
 networks:
-  my-net:
+  backend:
+  frontend:
 
 volumes:
   db-postgres:
