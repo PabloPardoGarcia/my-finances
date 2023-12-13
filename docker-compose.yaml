@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:14.3-alpine
+    hostname: my-finances-postgres
+    container_name: my-finances-postgres
+    restart: on-failure
+    env_file:
+        - dbt/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-postgres:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+    networks:
+      - my-net
+
+  dbt:
+    image: ghcr.io/pablopardogarcia/my-finances-dbt:latest
+    build: ./dbt
+    container_name: my-finances-dbt
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    env_file:
+        - dbt/.env
+    depends_on:
+      - db
+    networks:
+      - my-net
+
+  api:
+    image: ghcr.io/pablopardogarcia/my-finances-api:latest
+    build: ./api
+    container_name: my-finances-api
+    ports:
+      - "8001:80"
+    env_file:
+        - api/.env
+    depends_on:
+      - db
+    networks:
+      - my-net
+
+  frontend:
+    image: ghcr.io/pablopardogarcia/my-finances-frontend:latest
+    build: ./frontend
+    container_name: my-finances-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - dbt
+      - api
+    networks:
+      - my-net
+
+networks:
+  my-net:
+
+volumes:
+  db-postgres:
