@@ -17,7 +17,7 @@ def mocked_file_content(mocker):
 
 
 def test_upload_non_csv_file(client: TestClient):
-    file_content = "test_file.docx"
+    file_content = "{'fake_key':'fake_value'}"
     with patch("builtins.open", mock_open(read_data=file_content)):
         files = {
             "file": ("fake_path.json", open("fake_path.json", "r"), "application/json")
@@ -29,3 +29,19 @@ def test_upload_non_csv_file(client: TestClient):
         assert response.json() == {
             "detail": "Invalid file type, only CSV files are accepted."
         }
+
+
+def test_upload_transaction(client: TestClient):
+    file_content = (
+        "10.10.2023;10.10.2023;VISA FAKE SHOP;Lastschrift;FAKE;100;EUR;-13,00;EUR\n"
+    )
+    with patch("builtins.open", mock_open(read_data=file_content)):
+        files = {"file": ("fake_path.csv", open("fake_path.csv", "r"), "text/csv")}
+        payload = {"table_name": "sources.transactions"}
+        response = client.post("/upload", files=files, data=payload)
+
+        assert response.status_code == 200, response.text
+        assert (
+            response.json()["message"]
+            == "Successfully added 1 new sources.transactions"
+        )

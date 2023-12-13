@@ -1,20 +1,25 @@
-import os
-from typing import Annotated
+import codecs
+import csv
+from typing import Annotated, Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
 
-from .db import copy_file, get_table_size
-from .models import Database
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
-database = Database(
-    host=os.getenv("POSTGRES_HOST"),
-    port=os.getenv("POSTGRES_PORT", default=5432),
-    user=os.getenv("POSTGRES_USER"),
-    password=os.getenv("POSTGRES_PASSWORD"),
-    dbname=os.getenv("POSTGRES_DB"),
-)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="My Finances Uploader App", version="0.0.0", root_path="/api")
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/")
@@ -23,43 +28,66 @@ async def root():
 
 
 @app.post("/upload")
-def upload_csv_to_table(
-    file: Annotated[UploadFile, File()], table_name: Annotated[str, Form()]
+def upload(
+    file: Annotated[UploadFile, File()],
+    table_name: Annotated[str, Form()],
+    db: Session = Depends(get_db),
 ):
     if file.content_type != "text/csv":
         raise HTTPException(
             status_code=400, detail="Invalid file type, only CSV files are accepted."
         )
 
+    if table_name == "sources.transactions":
+        header = [
+            "booking",
+            "value_date",
+            "client_recipient",
+            "booking_text",
+            "purpose",
+            "balance",
+            "balance_currency",
+            "amount",
+            "amount_currency",
+        ]
+        schema = schemas.TransactionBase
+        crud_create = crud.create_transaction
+    elif table_name == "sources.categories":
+        header = ["name"]
+        schema = schemas.CategoryBase
+        crud_create = crud.create_category
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid table name, only transactions or " "categories are valid.",
+        )
     try:
-        table_count_before = get_table_size(
-            table_name=table_name, connection_str=database.get_connection_str()
+        counts = 0
+        reader = csv.DictReader(
+            codecs.iterdecode(file.file, "utf-8"), delimiter=";", fieldnames=header
         )
-        copy_file(
-            file=file.file,
-            connection_str=database.get_connection_str(),
-            table_name=table_name,
-            table_cols=[
-                "booking",
-                "value_date",
-                "client_recipient",
-                "booking_text",
-                "purpose",
-                "balance",
-                "balance_currency",
-                "amount",
-                "amount_currency",
-            ],
-            options=["HEADER", "CSV", "DELIMITER ';'"],
-        )
-        table_count_after = get_table_size(
-            table_name=table_name, connection_str=database.get_connection_str()
-        )
+        for row in reader:
+            print(row)
+            crud_create(db=db, transaction=schema.model_validate(row))
+            counts += 1
+
     except Exception as e:
         return {"message": f"There was an error uploading the file. {e}"}
     finally:
         file.file.close()
 
-    return {
-        "message": f"Successfully added {table_count_after - table_count_before} new records to table {table_name}"
-    }
+    return {"message": f"Successfully added {counts} new {table_name}"}
+
+
+# @app.get("/query/{table_name}")
+# def query(table_name: str, limit: Optional[int] = None, offset: Optional[int] = None):
+#     try:
+#         table_json = fetch_table(
+#             table_name=table_name,
+#             connection_str=database.get_connection_str(),
+#             limit=limit,
+#             offset=offset
+#         )
+#     except Exception as e:
+#         return {"message": f"There was an error querying the table {table_name}. {e}"}
+#     return Response(table_json, media_type="application/json")
