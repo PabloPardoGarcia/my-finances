@@ -8,10 +8,12 @@ def get_transactions(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_transaction(db: Session, transaction: schemas.TransactionBase):
-    db_transaction = models.Transaction(**transaction.model_dump())
+    transaction_dump = transaction.model_dump()
+    db_transaction = models.Transaction(**transaction_dump)
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
+    print(f"Created transaction {transaction_dump}")
     return db_transaction
 
 
@@ -21,6 +23,10 @@ def create_category(db: Session, category: schemas.CategoryBase):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+
+def get_categories(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Category).offset(skip).limit(limit).all()
 
 
 def create_transaction_category(
