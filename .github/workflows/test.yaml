@@ -42,25 +42,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ${{ secrets.DOCKER_REPOSITORY }}
-      
-      - name: Build and Push
-        uses: docker/build-push-action@v5
-        with:
-          context: ./api
-          file: ./api/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-api:test
-          target: test
 
-      - name: Run Test
-        uses: addnab/docker-run-action@v3
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
         with:
-          image: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-api:test
-          options: |
-            -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            -e POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            -e POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          envkey_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          directory: ./
+          fail_on_empty: true
+
+      - name: Run Tests
+        run: docker-compose -f docker-compose-tests.yaml up --build api
 
   frontend:
     name: frontend
@@ -79,24 +73,18 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ${{ secrets.DOCKER_REPOSITORY }}
 
-      - name: Build and Push
-        uses: docker/build-push-action@v5
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-frontend:test
-          target: test
+          envkey_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          directory: ./
+          fail_on_empty: true
 
-      - name: Run Test
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-frontend:test
-          options: |
-            -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            -e POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            -e POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+      - name: Run Tests
+        run: docker-compose -f docker-compose-tests.yaml up --build frontend
 
   dbt:
     name: dbt
@@ -115,21 +103,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ${{ secrets.DOCKER_REPOSITORY }}
 
-      - name: Build and Push
-        uses: docker/build-push-action@v5
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
         with:
-          context: ./dbt
-          file: ./dbt/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-dbt:test
-          target: test
+          envkey_POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          directory: ./
+          fail_on_empty: true
 
-      - name: Run Test
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ secrets.DOCKER_REPOSITORY }}/${{ secrets.DOCKER_USERNAME }}/my-finances-dbt:test
-          options: |
-            -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            -e POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            -e POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+      - name: Run Tests
+        run: docker-compose -f docker-compose-tests.yaml up --build dbt
