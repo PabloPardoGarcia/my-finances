@@ -1,6 +1,7 @@
 import logging
-import requests
 import streamlit as st
+
+from api import upload
 
 logger = logging.getLogger(st.__name__)
 st.set_page_config(
@@ -22,16 +23,16 @@ table_name = st.selectbox(
     options=("transactions", "categories"),
 )
 
-if uploaded_file and table_name:
-    files = {
-        "file": (uploaded_file.name, uploaded_file.read(), "text/csv"),
-    }
-    payload = {"table_name": f"sources.{table_name}"}
-    response = requests.post(
-        url="http://my-finances-api/upload", files=files, data=payload
-    )
-
-    if response.status_code != 200:
-        st.error(response.json()["message"])
+if st.button("Upload"):
+    if uploaded_file and table_name:
+        response = upload(uploaded_file, table_name)
+        if response.status_code != 200:
+            logger.error(response.json()["message"])
+            st.error(response.json()["message"])
+        else:
+            logger.info(response.json()["message"])
+            st.success(response.json()["message"])
+    elif uploaded_file is None:
+        st.error("Missing file to upload.")
     else:
-        st.success(response.text)
+        st.error("Missing a table to upload your file to.")
