@@ -87,13 +87,13 @@ def upload(
     return {"message": f"Successfully added {counts} new {table_name}"}
 
 
-@app.get("/transactions/", response_model=list[schemas.TransactionRead])
+@app.get("/transactions", response_model=list[schemas.TransactionRead])
 def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     transactions = crud.get_transactions(db=db, skip=skip, limit=limit)
     return transactions
 
 
-@app.get("/categories/", response_model=list[schemas.Category])
+@app.get("/categories", response_model=list[schemas.Category])
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     categories = crud.get_categories(db=db, skip=skip, limit=limit)
     return categories
