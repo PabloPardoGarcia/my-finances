@@ -2,12 +2,15 @@ import logging
 import streamlit as st
 
 from api import upload
+from components import sidebar
 
 logger = logging.getLogger(st.__name__)
+
 st.set_page_config(
     page_title="Upload Finances Data",
     page_icon=":floppy_disk:",
 )
+sidebar()
 
 st.write("# Upload")
 
@@ -25,7 +28,8 @@ table_name = st.selectbox(
 
 if st.button("Upload"):
     if uploaded_file and table_name:
-        response = upload(uploaded_file, table_name)
+        with st.spinner('Uploading ...'):
+            response = upload(uploaded_file, table_name)
         if response.status_code != 200:
             logger.error(response.json()["message"])
             st.error(response.json()["message"])
