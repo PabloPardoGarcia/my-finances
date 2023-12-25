@@ -1,10 +1,14 @@
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import models, schemas
 
 
-def get_transactions(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Transaction).offset(skip).limit(limit).all()
+def get_transactions(db: Session):
+    return paginate(
+        db, select(models.Transaction).order_by(models.Transaction.inserted_at)
+    )
 
 
 def create_transaction(db: Session, transaction: schemas.TransactionBase):

@@ -3,6 +3,7 @@ import csv
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi_pagination import Page, add_pagination
 from sqlalchemy.orm import Session
 
 from . import crud, dbt, models, schemas
@@ -87,13 +88,15 @@ def upload(
     return {"message": f"Successfully added {counts} new {table_name}"}
 
 
-@app.get("/transactions", response_model=list[schemas.TransactionRead])
-def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    transactions = crud.get_transactions(db=db, skip=skip, limit=limit)
-    return transactions
+@app.get("/transactions", response_model=Page[schemas.TransactionRead])
+def read_transactions(db: Session = Depends(get_db)):
+    return crud.get_transactions(db=db)
 
 
 @app.get("/categories", response_model=list[schemas.Category])
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     categories = crud.get_categories(db=db, skip=skip, limit=limit)
     return categories
+
+
+add_pagination(app)

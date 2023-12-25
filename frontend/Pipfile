@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 streamlit="*"
+streamlit-aggrid="*"
+streamlit-extras="*"
+pydantic = "*"
 
 [dev-packages]
 black="*"
