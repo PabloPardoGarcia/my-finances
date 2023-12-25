@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
+fastapi-pagination = "*"
 python-multipart = "*"
 uvicorn = {version="*", extras=["standard"]}
 sqlalchemy = "*"
