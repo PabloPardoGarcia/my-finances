@@ -52,7 +52,7 @@ def upload(
             "amount",
             "amount_currency",
         ]
-        schema = schemas.TransactionBase
+        schema = schemas.TransactionSource
         crud_create = crud.create_transaction
     elif table_name == "sources.categories":
         header = ["name"]
@@ -88,7 +88,7 @@ def upload(
     return {"message": f"Successfully added {counts} new {table_name}"}
 
 
-@app.get("/transactions", response_model=Page[schemas.TransactionRead])
+@app.get("/transactions", response_model=Page[schemas.TransactionMart])
 def read_transactions(db: Session = Depends(get_db)):
     return crud.get_transactions(db=db)
 

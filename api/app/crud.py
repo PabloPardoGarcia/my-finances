@@ -7,13 +7,15 @@ from . import models, schemas
 
 def get_transactions(db: Session):
     return paginate(
-        db, select(models.Transaction).order_by(models.Transaction.inserted_at)
+        db,
+        select(models.TransactionMart).order_by(
+            models.TransactionMart.inserted_at)
     )
 
 
-def create_transaction(db: Session, transaction: schemas.TransactionBase):
+def create_transaction(db: Session, transaction: schemas.TransactionSource):
     transaction_dump = transaction.model_dump()
-    db_transaction = models.Transaction(**transaction_dump)
+    db_transaction = models.TransactionSource(**transaction_dump)
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
