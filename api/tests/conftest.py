@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+from sqlalchemy.schema import CreateSchema
 
 from app.database import DATABASE_URL, Base
 from app.main import app, get_db
@@ -14,6 +15,11 @@ engine = create_engine(
     poolclass=StaticPool,
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+mart_schemas = "dbt_finances"
+if not engine.dialect.has_schema(engine, mart_schemas):
+    engine.execute(CreateSchema(mart_schemas))
+
 Base.metadata.create_all(bind=engine)
 
 

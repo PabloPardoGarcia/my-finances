@@ -23,13 +23,6 @@ def load_transactions():
         df_pages.append(pd.DataFrame.from_records(transactions_json))
     if df_pages:
         df = pd.concat(df_pages, ignore_index=True, sort=True)
-
-        df["booking"] = pd.to_datetime(df.booking, format="%d.%m.%Y")
-        df["balance"] = pd.to_numeric(
-            df.balance.str.replace(".", "").str.replace(",", ".")
-        )
-
-        df = df.sort_values("booking", ignore_index=True)
     else:
         df = pd.DataFrame()
     return df
@@ -49,7 +42,7 @@ def aggregate_balance(df: pd.DataFrame, period: str) -> pd.DataFrame:
     elif period == "year":
         freq = "Y"
 
-    return df.groupby([pd.Grouper(key="booking", freq=freq)]).agg({
+    return df.groupby([pd.Grouper(key="booking_date", freq=freq)]).agg({
         "balance": "last"
     }).reset_index()
 
@@ -79,11 +72,9 @@ if not data.empty:
     st.write("## Account Balance")
     period = st.selectbox("Aggregation Period", options=AGG_PERIODS)
     balance_df = aggregate_balance(filtered_df, period=period)
-    logger.info(balance_df.head())
-    logger.info(balance_df.dtypes)
     chart = (
         alt.Chart(balance_df)
         .mark_line()
-        .encode(x="booking:T", y="balance:Q")
+        .encode(x="booking_date:T", y="balance:Q")
     )
     st.altair_chart(chart, use_container_width=True)
